@@ -50,7 +50,7 @@ const TopBar = ({ toggleSidebar, headerText = "Dashboard", subHeaderText }) => {
                 <span className="text-white text-sm font-medium">M</span>
               </div>
 
-              <div className="text-left w-[120px] group relative">
+              <div className="text-left md:w-[120px] sm:w-[100px] group relative">
                 <div className="text-sm font-medium truncate">Ello User</div>
                 <div className="text-xs text-gray-500">Admin</div>
               </div>

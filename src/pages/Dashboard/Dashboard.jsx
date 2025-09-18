@@ -168,7 +168,7 @@ const Dashboard = () => {
           value={selectedDateRange}
           onChange={handleDateChange}
           placeholder="Select Date Range"
-          className="w-[300px]"
+          className="md:w-[300px] sm:w-[200px] w-[200px]"
         />
       </div>
 
