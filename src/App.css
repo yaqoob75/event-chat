@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body, #root {
+    @apply h-full m-0 p-0 bg-white font-sans;
+  }
+
+  body {
+    @apply bg-white;
+  }
+}
+
+/* Sidebar active icon */
+.active-icon {
+  filter: brightness(0);
+}
+
+/* Remove number arrows input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  @apply appearance-none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
