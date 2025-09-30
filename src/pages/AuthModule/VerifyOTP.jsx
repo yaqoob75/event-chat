@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { CustomButton } from "../../components";
@@ -7,6 +8,7 @@ const VerifyOTP = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
+  const { email } = useSelector((state) => state?.auth);
 
   const handleInputChange = (index, value) => {
     if (value.length > 1) return;
@@ -75,9 +77,7 @@ const VerifyOTP = () => {
             <p className="text-sm sm:text-base text-[#9D9D9D] mb-6 leading-relaxed">
               We sent a 6-digit code to your registered email address:
               <br />
-              <span className="font-medium text-black">
-                rbrandom@example.com
-              </span>
+              <span className="font-medium text-black">{email}</span>
             </p>
 
             <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-2 lg:gap-2 mb-8">
