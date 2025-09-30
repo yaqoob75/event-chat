@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { TopBar, Sidebar } from "../components";
 
 const ProtectedLayout = () => {
-  const token = "hfjhdjhfjsdfhsjhfjsd";
+  const { token } = useSelector((state) => state?.auth);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [headerText, setHeaderText] = useState("Dashboard");

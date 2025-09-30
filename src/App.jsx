@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedLayout from "./utils/ProtectedLayout";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { PageNotFound } from "./components";
 import {
   Login,

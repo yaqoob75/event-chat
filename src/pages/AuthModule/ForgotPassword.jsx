@@ -1,16 +1,32 @@
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { Formik, Form } from "formik";
 import { IoIosArrowBack } from "react-icons/io";
 import { forgotPasswordSchema } from "../../schemas/validations";
 import { InputField, CustomButton } from "../../components";
+import { useForgotPasswordMutation } from "../../api/apiSlice";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
+import { setEmail } from "../../store/auth/authSlice";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const dispatch =  useDispatch();
   const initialValues = { email: "" };
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
-  const handleSubmit = (data) => {
-    console.log("Forgot password data:", data);
-    navigate("/verify-otp")
+    const handleSubmit = async (data) => {
+    try {
+      const response = await forgotPassword(data).unwrap();
+      if (response) {
+        showSuccessToast("Verification link sent successfully!");
+        navigate("/verify-otp");
+        dispatch(setEmail(data.email));
+      }
+    } catch (error) {
+      showErrorToast(
+        error?.data?.message || "Something went wrong please try again"
+      );
+    }
   };
 
   return (
@@ -58,6 +74,8 @@ const ForgotPassword = () => {
                     borderRadius="rounded-full"
                     hoverClass="hover:bg-[#67abdf]"
                     height="h-14"
+                    loading={isLoading}
+                    disabled={isLoading}
                   />
                 </div>
               </Form>

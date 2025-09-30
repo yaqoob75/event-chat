@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
-// import authReducer from "./features/auth/slices/authSlice";
-import { api } from "./api/apiSlice";
+import authReducer from "./auth/authSlice";
+import { api } from "../api/apiSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import localStorage from "redux-persist/lib/storage";
 const persistConfig = {
@@ -11,7 +11,7 @@ const persistConfig = {
 };
 const appReuducer = combineReducers({
   [api.reducerPath]: api.reducer,
-  // auth: authReducer,
+  auth: authReducer,
 });
 const rootReducer = (state, action) => {
   if (action.type === "auth/logout") {

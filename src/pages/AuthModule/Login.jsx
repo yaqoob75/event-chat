@@ -5,17 +5,28 @@ import { Formik, Form } from "formik";
 import { loginSchema } from "../../schemas/validations";
 import { InputField, CustomCheckBox, CustomButton } from "../../components";
 import { authLogo } from "../../constants/home";
+import { useLoginMutation } from "../../api/apiSlice";
+import { useDispatch } from "react-redux";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
+import { updateUser } from "../../store/auth/authSlice";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const initialValues = { email: "", password: "", rememberMe: false };
+  const [login, { isLoading }] = useLoginMutation();
 
-  const handleSubmit = (data) => {
-    console.log("Login data:", data);
-    navigate("/dashboard");
+  const handleSubmit = async (data) => {
+    try {
+      const response = await login(data).unwrap();
+      dispatch(updateUser(response));
+      showSuccessToast("Login Successfully!");
+      navigate("/dashboard");
+    } catch (error) {
+      showErrorToast(error?.data?.message || "Login failed, please try again");
+    }
   };
-
   return (
     <div className="min-h-screen flex bg-white">
       {/* Left Side */}
@@ -81,6 +92,8 @@ const LoginPage = () => {
                     borderRadius="rounded-full"
                     hoverClass="hover:bg-[#67abdf]"
                     height="h-14"
+                    loading={isLoading}
+                    disabled={isLoading}
                   />
                 </div>
               </Form>
