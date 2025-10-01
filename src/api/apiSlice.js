@@ -30,16 +30,16 @@ export const api = createApi({
         body: payload,
       }),
     }),
-    resetPassword: builder.mutation({
+    verifyOtp: builder.mutation({
       query: (payload) => ({
-        url: "/auth/reset_password",
+        url: "/userAuth/verifyOtp",
         method: "POST",
         body: payload,
       }),
     }),
-    updatePassword: builder.mutation({
+    resetPassword: builder.mutation({
       query: (payload) => ({
-        url: "/auth/update_password",
+        url: "/userAuth/updatePassword",
         method: "POST",
         body: payload,
       }),
@@ -51,6 +51,6 @@ export const {
   // Auth API's
   useLoginMutation,
   useForgotPasswordMutation,
+  useVerifyOtpMutation,
   useResetPasswordMutation,
-  useUpdatePasswordMutation,
 } = api;

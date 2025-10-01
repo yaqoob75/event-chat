@@ -4,6 +4,8 @@ import { Formik, Form } from "formik";
 import { resetPasswordSchema } from "../../schemas/validations";
 import { IoIosArrowBack } from "react-icons/io";
 import { InputField, CustomButton, AuthSuccessModal } from "../../components";
+import { useResetPasswordMutation } from "../../api/apiSlice";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -11,15 +13,30 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
 
   const handleBackToLogin = () => {
     setIsSuccess(false);
     navigate("/");
   };
 
-  const handleSubmit = (data) => {
-    setIsSuccess(true);
-    console.log("Forgot password data:", data);
+  const handleSubmit = async (data) => {
+    try {
+      const payload = {
+        currentPassword: data.password,
+        newPassword: data.confirmPassword,
+        confirmNewPassword: data.confirmPassword,
+      };
+      const response = await resetPassword(payload).unwrap();
+      if (response) {
+        setIsSuccess(true);
+        showSuccessToast("Password Updated Successfuly!");
+      }
+    } catch (error) {
+      showErrorToast(
+        error?.data?.message || "Something went wrong please try again"
+      );
+    }
   };
 
   return (
@@ -29,8 +46,8 @@ const ResetPassword = () => {
       <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-8">
         <div className="md:w-[80%] w-[95%] mx-auto">
           <button
-            className="flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors cursor-pointer"
             onClick={() => navigate(-1)}
+            className="flex items-center text-gray-600 hover:text-gray-800 mb-8 transition-colors cursor-pointer"
           >
             <IoIosArrowBack className="mr-1" size={25} />
             <span className="text-base text">Back</span>
@@ -74,6 +91,8 @@ const ResetPassword = () => {
                     borderRadius="rounded-full"
                     hoverClass="hover:bg-[#67abdf]"
                     height="h-12 sm:h-14"
+                    disabled={isLoading}
+                    loading={isLoading}
                   />
                 </div>
               </Form>

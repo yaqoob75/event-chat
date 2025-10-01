@@ -3,12 +3,15 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { CustomButton } from "../../components";
+import { useVerifyOtpMutation } from "../../api/apiSlice";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const { email } = useSelector((state) => state?.auth);
+  const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
 
   const handleInputChange = (index, value) => {
     if (value.length > 1) return;
@@ -48,11 +51,19 @@ const VerifyOTP = () => {
 
   const isOtpComplete = otp.every((digit) => digit !== "");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isOtpComplete) {
       const otpCode = otp.join("");
-      console.log("OTP Entered:", otpCode);
-      navigate("/reset-password");
+      try {
+        const payload = { email, otp: Number(otpCode) };
+        const response = await verifyOtp(payload).unwrap();
+        if (response) {
+          navigate("/reset-password");
+          showSuccessToast("OTP Verification Successfuly!");
+        }
+      } catch (error) {
+        showErrorToast(error?.data?.message || "OTP Verification Failed");
+      }
     }
   };
 
@@ -108,7 +119,8 @@ const VerifyOTP = () => {
               borderRadius="rounded-full"
               hoverClass="hover:bg-[#67abdf]"
               height="h-12 sm:h-14"
-              disabled={!isOtpComplete}
+              disabled={!isOtpComplete || isLoading}
+              loading={isLoading}
             />
           </div>
         </div>

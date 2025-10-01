@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     try {
       const response = await forgotPassword(data).unwrap();
       if (response) {
-        showSuccessToast("Verification link sent successfully!");
+        showSuccessToast("Verification code sent successfully!");
         navigate("/verify-otp");
         dispatch(setEmail(data.email));
       }
