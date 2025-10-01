@@ -3,11 +3,14 @@ import useHeader from "../../hooks/useHeader";
 import { Formik, Form } from "formik";
 import { settingsSchema } from "../../schemas/validations";
 import { InputField, CustomButton } from "../../components";
+import { useUpdatePasswordMutation } from "../../api/apiSlice";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 const Settings = () => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [updatePassword, { isLoading }] = useUpdatePasswordMutation();
 
   const initialValues = {
     oldPassword: "",
@@ -21,8 +24,22 @@ const Settings = () => {
     subHeaderText: "",
   });
 
-  const handleSubmit = (data) => {
-    console.log("Login data:", data);
+  const handleSubmit = async (data) => {
+    try {
+      const payload = {
+        currentPassword: data.oldPassword,
+        newPassword: data.newPassword,
+        confirmNewPassword: data.confirmNewPassword,
+      };
+      const response = await updatePassword(payload).unwrap();
+      if (response) {
+        showSuccessToast("Password Updated Successfuly!");
+      }
+    } catch (error) {
+      showErrorToast(
+        error?.data?.message || "Something went wrong please try again"
+      );
+    }
   };
 
   return (
@@ -87,6 +104,8 @@ const Settings = () => {
                 btnPadding="px-12"
                 height="h-14"
                 width="w-fit"
+                loading={isLoading}
+                disabled={isLoading}
               />
             </div>
           </Form>

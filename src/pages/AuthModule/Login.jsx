@@ -20,13 +20,16 @@ const LoginPage = () => {
   const handleSubmit = async (data) => {
     try {
       const response = await login(data).unwrap();
-      dispatch(updateUser(response));
-      showSuccessToast("Login Successfully!");
-      navigate("/dashboard");
+      if (response) {
+        dispatch(updateUser(response));
+        showSuccessToast("Login Successfully!");
+        navigate("/dashboard");
+      }
     } catch (error) {
       showErrorToast(error?.data?.message || "Login failed, please try again");
     }
   };
+  
   return (
     <div className="min-h-screen flex bg-white">
       {/* Left Side */}

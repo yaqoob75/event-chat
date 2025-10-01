@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { Formik, Form } from "formik";
 import { resetPasswordSchema } from "../../schemas/validations";
 import { IoIosArrowBack } from "react-icons/io";
@@ -14,6 +15,7 @@ const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const { email } = useSelector((state) => state?.auth);
 
   const handleBackToLogin = () => {
     setIsSuccess(false);
@@ -23,9 +25,8 @@ const ResetPassword = () => {
   const handleSubmit = async (data) => {
     try {
       const payload = {
-        currentPassword: data.password,
-        newPassword: data.confirmPassword,
-        confirmNewPassword: data.confirmPassword,
+        email,
+        password: data.confirmPassword,
       };
       const response = await resetPassword(payload).unwrap();
       if (response) {
@@ -98,7 +99,6 @@ const ResetPassword = () => {
               </Form>
             )}
           </Formik>
-
           {isSuccess && (
             <AuthSuccessModal
               onClose={handleBackToLogin}

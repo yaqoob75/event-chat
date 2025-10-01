@@ -1,15 +1,23 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { BiSolidUserPin } from "react-icons/bi";
 import { IoSettingsSharp, IoLogOut } from "react-icons/io5";
 import { FiMenu, FiChevronDown } from "react-icons/fi";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { notificationIcon } from "../../constants/home";
+import { logout } from "../../store/auth/authSlice";
 
 const TopBar = ({ toggleSidebar, headerText = "Dashboard", subHeaderText }) => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+    setDropdownOpen(false);
+    dispatch(logout());
+    navigate("/");
+  };
 
   return (
     <header className="bg-white border-b border-[#F0F1F3]">
@@ -91,10 +99,7 @@ const TopBar = ({ toggleSidebar, headerText = "Dashboard", subHeaderText }) => {
                   <button
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
                     type="button"
-                    onClick={() => {
-                      navigate("/");
-                      setDropdownOpen(false);
-                    }}
+                    onClick={handleLogout}
                   >
                     <IoLogOut className="w-5 h-5 mr-3" />
                     Logout
