@@ -42,7 +42,7 @@ function App() {
           <Route path={"/dashboard"} element={<Dashboard />} />
           <Route path={"/customers"} element={<CustomersList />} />
           <Route
-            path={"/customers/customer-detail"}
+            path={"/customers/customer-detail/:id"}
             element={<CustomerDetail />}
           />
           <Route path={"/events"} element={<EventsList />} />

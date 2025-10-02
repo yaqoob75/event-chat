@@ -35,7 +35,7 @@ const UserAvatar = ({ user, showName = true, size = "md" }) => {
 
       {showName && (
         <div className="ml-3">
-          <div className="text-sm font-normal">{user.name}</div>
+          <div className="text-sm font-normal capitalize">{user.name}</div>
         </div>
       )}
     </div>

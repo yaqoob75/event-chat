@@ -26,6 +26,19 @@ export const customerFilterOptions = [
   { label: "Admin", value: "Admin" },
 ];
 
+export const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "N/A";
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 export const cityOptions = [
   { value: "new-york", label: "New York" },
   { value: "los-angeles", label: "Los Angeles" },

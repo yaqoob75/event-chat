@@ -65,6 +65,18 @@ export const api = createApi({
       }),
       providesTags: ["customers"],
     }),
+    getCustomerProfileDetail: builder.query({
+      query: ({ id }) => ({
+        url: `/user/getUserProfile/${id}`,
+        method: "GET",
+      }),
+    }),
+    getCustomerEventsDetail: builder.query({
+      query: ({ id }) => ({
+        url: `/user/getUserProfile/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -77,4 +89,6 @@ export const {
   useUpdatePasswordMutation,
   // Customers
   useGetAllCustomersQuery,
+  useGetCustomerProfileDetailQuery,
+  useGetCustomerEventsDetailQuery,
 } = api;

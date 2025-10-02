@@ -2,6 +2,7 @@ import TopBar from "./TopBar";
 import Sidebar from "./Sidebar";
 import PageNotFound from "./PageNotFound";
 import CustomButton from "./CustomButton";
+import CustomLoader from "./CustomLoader";
 import InputField from "./InputField";
 import SearchField from "./SearchField";
 import CustomSelect from "./CustomSelect";
@@ -42,6 +43,7 @@ export {
   Sidebar,
   PageNotFound,
   CustomButton,
+  CustomLoader,
   InputField,
   SearchField,
   CustomSelect,

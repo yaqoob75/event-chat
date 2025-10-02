@@ -8,7 +8,7 @@ import {
 } from "../../components";
 import { useGetAllCustomersQuery } from "../../api/apiSlice";
 import { useDebounce } from "../../hooks/useDebounce";
-import { customerFilterOptions } from "../../constants/home";
+import { customerFilterOptions, formatDate } from "../../constants/home";
 
 const CustomersList = () => {
   const navigate = useNavigate();
@@ -42,15 +42,23 @@ const CustomersList = () => {
   }, [customersData]);
 
   const customers = Array.isArray(customersData?.data?.users)
-    ? customersData?.data?.users.map((item) => ({
-        id: item?._id,
-        customerName: { name: "abc", avatar: item?.profilePicture },
-        email: item?.email || "N/A",
-        phoneNumber: item?.phoneNumber || "N/A",
-        memberType: item?.role || "N/A",
-        memberSince: item?.createdAt || "N/A",
-        lastCheckIn: item?.lastCheckIn || "N/A",
-      }))
+    ? customersData?.data?.users.map((item) => {
+        const fullName = [item?.firstName, item?.lastName]
+          .filter(Boolean)
+          .join(" ");
+        return {
+          id: item?._id,
+          customerName: {
+            name: fullName || "N/A",
+            avatar: item?.profilePicture,
+          },
+          email: item?.email || "N/A",
+          phoneNumber: item?.phoneNumber || "N/A",
+          memberType: item?.role || "N/A",
+          memberSince: formatDate(item?.createdAt),
+          lastCheckIn: item?.lastCheckIn || "N/A",
+        };
+      })
     : [];
 
   const columns = [
@@ -71,8 +79,8 @@ const CustomersList = () => {
     setCurrentPage(page);
   };
 
-  const handleRowClick = () => {
-    navigate(`/customers/customer-detail`);
+  const handleRowClick = (data) => {
+    navigate(`/customers/customer-detail/${data.id}`);
   };
 
   const handleToggleFilter = () => {

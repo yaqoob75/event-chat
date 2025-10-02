@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useHeader from "../../hooks/useHeader";
+import { useParams } from "react-router-dom";
 import {
   TabSwitch,
   TagList,
@@ -8,6 +9,7 @@ import {
   CustomerImgCard,
   EventsAttendedCard,
   JoinedGroupCard,
+  CustomLoader,
 } from "../../components";
 import {
   customerDetailProfileData,
@@ -15,16 +17,30 @@ import {
   eventsAttendedData,
   joinedGroupCardData,
 } from "../../constants/home";
+import { useGetCustomerProfileDetailQuery } from "../../api/apiSlice";
 
 const CustomerDetail = () => {
-
+  const { id } = useParams();
+  console.log("my id", id);
   const [activeTab, setActiveTab] = useState(0);
   const tabs = ["Profile", "Events", "Groups"];
-    useHeader({
+  useHeader({
     isHeader: true,
     headerText: "Customers",
     subHeaderText: "Customer Details",
   });
+
+  const {
+    data: profileData,
+    isLoading: profileLoading,
+  } = useGetCustomerProfileDetailQuery(
+    { id },
+    {
+      skip: activeTab !== 0,
+    }
+  );
+
+  console.log("profileData:", profileData?.data);
 
   return (
     <div>
@@ -33,7 +49,9 @@ const CustomerDetail = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
-      {activeTab === 0 && (
+      {activeTab === 0 && profileLoading ? (
+        <CustomLoader />
+      ) : activeTab === 0 ? (
         <>
           {/* Profile Header */}
           <div className="flex items-center gap-4 p-6 border-b border-gray-200">
@@ -119,7 +137,7 @@ const CustomerDetail = () => {
             ))}
           </div>
         </>
-      )}
+      ) :""}
       {activeTab === 1 && (
         <div className="p-6">
           <h2 className="text-xl font-semibold">Events attended</h2>
