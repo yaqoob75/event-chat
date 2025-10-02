@@ -20,6 +20,12 @@ export const sidebarItems = [
   { icon: settingIcon, label: "Support", path: "/support" },
 ];
 
+export const customerFilterOptions = [
+  { label: "Simple  User", value: "SimpleUser" },
+  { label: "Business User", value: "BusinessUser" },
+  { label: "Admin", value: "Admin" },
+];
+
 export const cityOptions = [
   { value: "new-york", label: "New York" },
   { value: "los-angeles", label: "Los Angeles" },

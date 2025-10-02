@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useHeader from "../../hooks/useHeader";
 import {
@@ -6,55 +6,52 @@ import {
   UserAvatar,
   FilterAndSearchHeader,
 } from "../../components";
+import { useGetAllCustomersQuery } from "../../api/apiSlice";
+import { useDebounce } from "../../hooks/useDebounce";
+import { customerFilterOptions } from "../../constants/home";
 
 const CustomersList = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 1;
-
+  const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState(null);
   const [isActiveFilter, setIsActiveFilter] = useState(false);
+  const debouncedSearchText = useDebounce(searchText, 1000);
 
   useHeader({
     isHeader: true,
     headerText: "Customers",
   });
 
-  const data = [
-    {
-      customerName: { name: "Olivia Rhye", avatar: "" },
-      email: "olivia@untitledui.com",
-      phoneNumber: "+34 623 723 234",
-      memberType: "Business",
-      memberSince: "Jan 6, 2025",
-      lastCheckIn: "Jan 6, 2025 11:58",
-    },
-    {
-      customerName: { name: "Phoenix Baker", avatar: "/man-avatar.png" },
-      email: "phoenix@untitledui.com",
-      phoneNumber: "+34 623 723 234",
-      memberType: "Individual",
-      memberSince: "Jan 6, 2025",
-      lastCheckIn: "Jan 6, 2025 11:58",
-    },
-    {
-      customerName: { name: "Lana Steiner", avatar: "/woman-avatar-2.png" },
-      email: "lana@untitledui.com",
-      phoneNumber: "+34 623 723 234",
-      memberType: "Business",
-      memberSince: "Jan 6, 2025",
-      lastCheckIn: "Jan 6, 2025 11:58",
-    },
-    {
-      customerName: { name: "Demi Wilkinson", avatar: "/woman-avatar-3.png" },
-      email: "demi@untitledui.com",
-      phoneNumber: "+34 623 723 234",
-      memberType: "Business",
-      memberSince: "Jan 6, 2025",
-      lastCheckIn: "Jan 6, 2025 11:58",
-    },
-  ];
+  const {
+    data: customersData,
+    isLoading,
+    isFetching,
+  } = useGetAllCustomersQuery({
+    search: debouncedSearchText,
+    role: selectedFilter?.value || "",
+    page: currentPage,
+    limit: 10,
+  });
+
+  useEffect(() => {
+    if (customersData) {
+      setTotalPages(customersData?.data?.pagination?.totalPages);
+    }
+  }, [customersData]);
+
+  const customers = Array.isArray(customersData?.data?.users)
+    ? customersData?.data?.users.map((item) => ({
+        id: item?._id,
+        customerName: { name: "abc", avatar: item?.profilePicture },
+        email: item?.email || "N/A",
+        phoneNumber: item?.phoneNumber || "N/A",
+        memberType: item?.role || "N/A",
+        memberSince: item?.createdAt || "N/A",
+        lastCheckIn: item?.lastCheckIn || "N/A",
+      }))
+    : [];
 
   const columns = [
     {
@@ -74,14 +71,18 @@ const CustomersList = () => {
     setCurrentPage(page);
   };
 
-  const subscriptionFilterOptions = [
-    { label: "Business", value: "business" },
-    { label: "Individual", value: "individual" },
-    { label: "All", value: "all" },
-  ];
-
   const handleRowClick = () => {
     navigate(`/customers/customer-detail`);
+  };
+
+  const handleToggleFilter = () => {
+    setIsActiveFilter((prev) => {
+      const newState = !prev;
+      if (!newState) {
+        setSelectedFilter(null);
+      }
+      return newState;
+    });
   };
 
   return (
@@ -89,23 +90,23 @@ const CustomersList = () => {
       <FilterAndSearchHeader
         title="Customers"
         isFilterVisible={isActiveFilter}
-        toggleFilter={() => setIsActiveFilter(!isActiveFilter)}
+        toggleFilter={handleToggleFilter}
         selectedFilter={selectedFilter}
-        filterOptions={subscriptionFilterOptions}
+        filterOptions={customerFilterOptions}
         onFilterChange={(val) => setSelectedFilter(val)}
         showFilterSelect={true}
         searchText={searchText}
         onSearchChange={(e) => setSearchText(e.target.value)}
       />
-
       <ReusableTable
         columns={columns}
-        data={data}
+        data={customers}
         isPagination={true}
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
         onRowClick={handleRowClick}
+        loading={isLoading || isFetching}
       />
     </div>
   );

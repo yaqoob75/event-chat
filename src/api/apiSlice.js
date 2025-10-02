@@ -44,12 +44,26 @@ export const api = createApi({
         body: payload,
       }),
     }),
-     updatePassword: builder.mutation({
+    updatePassword: builder.mutation({
       query: (payload) => ({
         url: "/userAuth/updatePassword",
         method: "PUT",
         body: payload,
       }),
+    }),
+    // Customers
+    getAllCustomers: builder.query({
+      query: ({ search = "", role = "", page = "", limit = 10 }) => ({
+        url: "/user/getAllUser",
+        method: "GET",
+        params: {
+          search,
+          role,
+          page,
+          limit,
+        },
+      }),
+      providesTags: ["customers"],
     }),
   }),
 });
@@ -61,4 +75,6 @@ export const {
   useVerifyOtpMutation,
   useResetPasswordMutation,
   useUpdatePasswordMutation,
+  // Customers
+  useGetAllCustomersQuery,
 } = api;
