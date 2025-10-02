@@ -39,6 +39,13 @@ export const formatDate = (dateString) => {
   });
 };
 
+export const getFullName = (user) => {
+  const first = user?.firstName;
+  const last = user?.lastName;
+  const fullName = [first, last].filter(Boolean).join(" ");
+  return fullName || "N/A";
+};
+
 export const cityOptions = [
   { value: "new-york", label: "New York" },
   { value: "los-angeles", label: "Los Angeles" },
@@ -60,51 +67,8 @@ export const genderOptions = [
 ];
 
 export const customerDetailProfileData = {
-  name: "User Name",
-  location: "Location",
   description:
     "This is a profile description that users can add in their 'edit profile' tab. This is a profile description that users can add in their 'edit profile' tab. This is a profile description that users can add in their 'edit profile' tab.",
-  interests: [
-    "Food",
-    "Run Clubs",
-    "Dance",
-    "Picnics",
-    "Picnics",
-    "Run Clubs",
-    "Dance",
-    "Picnics",
-    "Food",
-    "Food",
-    "Food",
-    "Dance",
-    "Food",
-    "Run Clubs",
-    "Dance",
-    "Picnics",
-    "Picnics",
-    "Run Clubs",
-    "Dance",
-    "Picnics",
-    "Food",
-    "Food",
-    "Food",
-    "Dance",
-  ],
-  qa: [
-    {
-      question: "What makes you, you?",
-      answer: "My lovely personality, and lovely eyebrows.",
-    },
-    {
-      question: "Why is your left leg longer than your right?",
-      answer:
-        "Lol who knows? It may be due to my genetics, or some form of poor stretching in my youth.",
-    },
-    {
-      question: "What makes you, you?",
-      answer: "My lovely personality, and lovely eyebrows.",
-    },
-  ],
 };
 
 export const customerImgCardData = [
@@ -171,71 +135,6 @@ export const eventsAttendedData = [
     location: "TBA",
     date: "Friday 4 March",
     time: "6-10pm",
-  },
-];
-
-export const joinedGroupCardData = [
-  {
-    id: 1,
-    title: "Hockey Appreciation Society",
-    image:
-      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1893&q=80",
-    avatars: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-    ],
-  },
-  {
-    id: 2,
-    title: "Hockey Appreciation Society",
-    image:
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1893&q=80",
-    avatars: [
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-    ],
-  },
-  {
-    id: 3,
-    title: "Hockey Appreciation Society",
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1893&q=80",
-    avatars: [
-      "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1567532900872-f4e906cbf06a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1558507652-2d9626c4e67a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-    ],
-  },
-  {
-    id: 4,
-    title: "Hockey Appreciation Society",
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1893&q=80",
-    avatars: [
-      "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1567532900872-f4e906cbf06a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1558507652-2d9626c4e67a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-    ],
   },
 ];
 
