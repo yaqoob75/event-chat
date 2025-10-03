@@ -25,6 +25,9 @@ const CustomerDetail = () => {
   const tabs = ["Profile", "Events", "Groups"];
   const [activeTab, setActiveTab] = useState(0);
 
+  const [showAllEvents, setShowAllEvents] = useState(false);
+  const [showAllGroups, setShowAllGroups] = useState(false);
+
   useHeader({
     isHeader: true,
     headerText: "Customers",
@@ -55,12 +58,21 @@ const CustomerDetail = () => {
   const profileEventData = profileData?.data?.events?.map((item) => ({
     id: item?._id,
     image: item?.image,
-    title: item?.eventName,
-    subtitle: item?.eventCategory,
+    title: item?.eventName || "N/A",
+    subtitle: item?.eventCategory || "N/A",
     location: "TBA",
     date: formatDate(item?.endDate),
     time: "6-10pm",
   }));
+
+  // limit to 4 unless "View all"
+  const displayedEvents = showAllEvents
+    ? profileEventData
+    : profileEventData?.slice(0, 4);
+
+  const displayedGroups = showAllGroups
+    ? profileGroupsData
+    : profileGroupsData?.slice(0, 4);
 
   return (
     <div>
@@ -153,13 +165,19 @@ const CustomerDetail = () => {
               {/* Events attended */}
               <div className="px-6 flex justify-between mt-5">
                 <h2 className="text-xl font-semibold">Events attended</h2>
-                <button type="button" className="underline cursor-pointer">
-                  View all
-                </button>
+                {profileEventData?.length > 4 && (
+                  <button
+                    type="button"
+                    className="underline cursor-pointer"
+                    onClick={() => setShowAllEvents(!showAllEvents)}
+                  >
+                    {showAllEvents ? "View less" : "View all"}
+                  </button>
+                )}
               </div>
               <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                {profileEventData?.length > 0 ? (
-                  profileEventData.map((event) => (
+                {displayedEvents?.length > 0 ? (
+                  displayedEvents.map((event) => (
                     <EventsAttendedCard
                       key={event.id}
                       image={event.image}
@@ -183,13 +201,19 @@ const CustomerDetail = () => {
               {/* Joined Groups */}
               <div className="px-6 flex justify-between mt-8">
                 <h2 className="text-xl font-semibold">Joined Groups</h2>
-                <button type="button" className="underline cursor-pointer">
-                  View all
-                </button>
+                {profileGroupsData?.length > 4 && (
+                  <button
+                    type="button"
+                    className="underline cursor-pointer"
+                    onClick={() => setShowAllGroups(!showAllGroups)}
+                  >
+                    {showAllGroups ? "View less" : "View all"}
+                  </button>
+                )}
               </div>
               <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                {profileGroupsData?.length > 0 ? (
-                  profileGroupsData.map((card) => (
+                {displayedGroups?.length > 0 ? (
+                  displayedGroups.map((card) => (
                     <JoinedGroupCard
                       key={card.id}
                       title={card.title}
