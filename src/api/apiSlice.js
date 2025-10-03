@@ -77,6 +77,19 @@ export const api = createApi({
         method: "GET",
       }),
     }),
+    // All Events
+    getAllEvents: builder.query({
+      query: ({ search = "", page = "", limit = 10 }) => ({
+        url: "/event/searchEvents",
+        method: "GET",
+        params: {
+          search,
+          page,
+          limit,
+        },
+      }),
+      providesTags: ["allEvents"],
+    }),
   }),
 });
 
@@ -91,4 +104,6 @@ export const {
   useGetAllCustomersQuery,
   useGetCustomerProfileDetailQuery,
   useGetCustomerEventsDetailQuery,
+  // All Events
+  useGetAllEventsQuery,
 } = api;

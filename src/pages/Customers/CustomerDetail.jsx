@@ -16,6 +16,7 @@ import {
   customerImgCardData,
   eventsAttendedData,
   getFullName,
+  formatDate,
 } from "../../constants/home";
 import { useGetCustomerProfileDetailQuery } from "../../api/apiSlice";
 
@@ -51,25 +52,14 @@ const CustomerDetail = () => {
     ],
   }));
 
-
-  // //   {
-  //   id: 1,
-  //   image:
-  //     "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-  //   title: "Kiehl's Summer Series",
-  //   subtitle: "Kiehl's",
-  //   location: "TBA",
-  //   date: "Friday 4 March",
-  //   time: "6-10pm",
-  // },
-
   const profileEventData = profileData?.data?.events.map((item) => ({
     id: item?._id,
     image: item?.image,
     title: item?.eventName,
     subtitle: item?.eventCategory,
-    location: "",
-    date:  item?.endDate,
+    location: "TBA",
+    date: formatDate(item?.endDate),
+    time: "6-10pm",
   }));
 
   return (
@@ -144,7 +134,7 @@ const CustomerDetail = () => {
                 </button>
               </div>
               <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                {eventsAttendedData.map((event) => (
+                {profileEventData.map((event) => (
                   <EventsAttendedCard
                     key={event.id}
                     image={event.image}

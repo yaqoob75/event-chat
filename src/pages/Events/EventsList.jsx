@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useHeader from "../../hooks/useHeader";
 import { ActiveTabSwitch, FilterSelect, SearchInput } from "../../components";
@@ -9,29 +9,65 @@ import {
   UserAvatar,
   StatusBadge,
 } from "../../components";
-
-const subscriptionFilterOptions = [
-  { label: "Business", value: "business" },
-  { label: "Individual", value: "individual" },
-  { label: "All", value: "all" },
-];
+import { subscriptionFilterOptions, formatDate } from "../../constants/home";
+import { useGetAllEventsQuery } from "../../api/apiSlice";
+import { useDebounce } from "../../hooks/useDebounce";
 
 const EventsList = () => {
-  useHeader({
-    isHeader: true,
-    headerText: "Events",
-  });
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const toggleFilter = () => setIsFilterVisible((prev) => !prev);
-
   const handleFilterChange = (option) => setSelectedFilter(option);
   const handleSearchChange = (e) => setSearchText(e.target.value);
+  const debouncedSearchText = useDebounce(searchText, 1000);
+
+  useHeader({
+    isHeader: true,
+    headerText: "Events",
+  });
+
+  const {
+    data: allEventsData,
+    isLoading: isAllEventLoading,
+    isFetching: isAllEventFetching,
+  } = useGetAllEventsQuery(
+    {
+      search: debouncedSearchText,
+      page: currentPage,
+      limit: 10,
+    },
+    {
+      skip: activeTab !== 0,
+    }
+  );
+
+  useEffect(() => {
+    if (allEventsData) {
+      setTotalPages(allEventsData?.data?.pages);
+    }
+  }, [allEventsData]);
+
+
+  const allEventsList = Array.isArray(allEventsData?.data?.events)
+    ? allEventsData?.data?.events.map((item) => ({
+        id: item?._id,
+        event: item?.eventName,
+        owner: { name: item?.eventName, avatar: item?.image },
+        isVerified: true,
+        type: item?.eventType,
+        domain: "Group",
+        created: formatDate(item.createdAt),
+        startDate: formatDate(item.startDate),
+        endDate: formatDate(item.endDate),
+        status: item.status,
+      }))
+    : [];
 
   const columns = [
     { key: "event", label: "Event", sortable: true },
@@ -57,44 +93,9 @@ const EventsList = () => {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      event: "Lorem Ipsum",
-      owner: { name: "Olivia Rhye", avatar: "/avatars/olivia.png" },
-      isVerified: true,
-      type: "Paid",
-      domain: "Group",
-      created: "Jan 6, 2025 11:58",
-      startDate: "Jan 6, 2025",
-      endDate: "Jan 6, 2025",
-      status: "Active",
-    },
-    {
-      id: 2,
-      event: "Lorem Ipsum",
-      owner: { name: "Phoenix Baker", avatar: "" },
-      isVerified: false,
-      type: "Free",
-      domain: "Individual",
-      created: "Jan 6, 2025 11:58",
-      startDate: "Jan 6, 2025",
-      endDate: "Jan 6, 2025",
-      status: "Active",
-    },
-    {
-      id: 3,
-      event: "Lorem Ipsum",
-      owner: { name: "Candice Wu", avatar: "/avatars/olivia.png" },
-      isVerified: false,
-      type: "Free",
-      domain: "Group",
-      created: "Jan 6, 2025 11:58",
-      startDate: "Jan 5, 2025",
-      endDate: "Jan 5, 2025",
-      status: "Expired",
-    },
-  ];
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const handleRowClick = () => {
     navigate(`/events/event-detail`);
@@ -136,7 +137,7 @@ const EventsList = () => {
           {activeTab === 1 && (
             <CustomButton
               btnTitle="Add"
-              onClick={()=> navigate("/events/add-event")}
+              onClick={() => navigate("/events/add-event")}
               borderRadius="rounded-lg"
               backgroundColor="bg-[#181D27]"
               fontColor="text-white"
@@ -150,12 +151,13 @@ const EventsList = () => {
 
       <ReusableTable
         columns={columns}
-        data={data}
+        data={allEventsList}
         isPagination={true}
         currentPage={currentPage}
-        totalPages={1}
-        onPageChange={setCurrentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
         onRowClick={handleRowClick}
+        loading={isAllEventLoading || isAllEventFetching}
       />
     </>
   );
