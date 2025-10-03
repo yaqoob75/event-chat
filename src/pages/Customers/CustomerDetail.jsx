@@ -38,7 +38,7 @@ const CustomerDetail = () => {
       }
     );
 
-  const groupsData = profileData?.data?.groups.map((item) => ({
+  const profileGroupsData = profileData?.data?.groups.map((item) => ({
     id: item?._id,
     title: item?.groupName || "N/A",
     image: item?.image,
@@ -49,6 +49,27 @@ const CustomerDetail = () => {
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
     ],
+  }));
+
+
+  // //   {
+  //   id: 1,
+  //   image:
+  //     "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+  //   title: "Kiehl's Summer Series",
+  //   subtitle: "Kiehl's",
+  //   location: "TBA",
+  //   date: "Friday 4 March",
+  //   time: "6-10pm",
+  // },
+
+  const profileEventData = profileData?.data?.events.map((item) => ({
+    id: item?._id,
+    image: item?.image,
+    title: item?.eventName,
+    subtitle: item?.eventCategory,
+    location: "",
+    date:  item?.endDate,
   }));
 
   return (
@@ -144,7 +165,7 @@ const CustomerDetail = () => {
                 </button>
               </div>
               <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                {groupsData?.map((card) => (
+                {profileGroupsData?.map((card) => (
                   <JoinedGroupCard
                     key={card.id}
                     title={card.title}
