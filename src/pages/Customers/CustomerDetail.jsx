@@ -39,20 +39,20 @@ const CustomerDetail = () => {
       }
     );
 
-  const profileGroupsData = profileData?.data?.groups.map((item) => ({
+  const profileGroupsData = profileData?.data?.groups?.map((item) => ({
     id: item?._id,
     title: item?.groupName || "N/A",
     image: item?.image,
     avatars: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...",
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?...",
     ],
   }));
 
-  const profileEventData = profileData?.data?.events.map((item) => ({
+  const profileEventData = profileData?.data?.events?.map((item) => ({
     id: item?._id,
     image: item?.image,
     title: item?.eventName,
@@ -69,6 +69,7 @@ const CustomerDetail = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
+
       {activeTab === 0 && (
         <>
           {isProfileLoading ? (
@@ -96,6 +97,7 @@ const CustomerDetail = () => {
                   {customerDetailProfileData.description}
                 </p>
               </div>
+
               {/* Content Area */}
               <div className="px-6 py-2">
                 <div className="flex items-center mb-6">
@@ -103,29 +105,51 @@ const CustomerDetail = () => {
                     Interests
                   </h3>
                   <div className="w-[70%]">
-                    <TagList tags={profileData?.data?.user?.interests} />
+                    {profileData?.data?.user?.interests?.length > 0 ? (
+                      <TagList tags={profileData?.data?.user?.interests} />
+                    ) : (
+                      <p className="text-gray-500 text-sm text-center">
+                        No data available
+                      </p>
+                    )}
                   </div>
                 </div>
-                {profileData?.data?.user?.profileAnswer?.map((item, index) => (
-                  <CustomerQA
-                    key={item._id || index}
-                    question={item.question}
-                    answer={item.answer}
-                  />
-                ))}
+
+                {profileData?.data?.user?.profileAnswer?.length > 0 ? (
+                  profileData?.data?.user?.profileAnswer?.map((item, index) => (
+                    <CustomerQA
+                      key={item._id || index}
+                      question={item.question}
+                      answer={item.answer}
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm text-center mb-6">
+                    No data available
+                  </p>
+                )}
               </div>
+
               {/* Cards */}
               <div className="px-6 flex gap-8">
-                {customerImgCardData.map((card) => (
-                  <CustomerImgCard
-                    key={card.id}
-                    image={card.image}
-                    title={card.title}
-                    alt={card.alt}
-                  />
-                ))}
+                {customerImgCardData?.length > 0 ? (
+                  customerImgCardData.map((card) => (
+                    <CustomerImgCard
+                      key={card.id}
+                      image={card.image}
+                      title={card.title}
+                      alt={card.alt}
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm text-center">
+                    No data available
+                  </p>
+                )}
               </div>
+
               <div className="px-6 border-b border-gray-200 my-4"></div>
+
               {/* Events attended */}
               <div className="px-6 flex justify-between mt-5">
                 <h2 className="text-xl font-semibold">Events attended</h2>
@@ -134,19 +158,28 @@ const CustomerDetail = () => {
                 </button>
               </div>
               <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                {profileEventData.map((event) => (
-                  <EventsAttendedCard
-                    key={event.id}
-                    image={event.image}
-                    title={event.title}
-                    subtitle={event.subtitle}
-                    location={event.location}
-                    date={event.date}
-                    time={event.time}
-                    className="hover:shadow-lg transition-shadow duration-300"
-                  />
-                ))}
+                {profileEventData?.length > 0 ? (
+                  profileEventData.map((event) => (
+                    <EventsAttendedCard
+                      key={event.id}
+                      image={event.image}
+                      title={event.title}
+                      subtitle={event.subtitle}
+                      location={event.location}
+                      date={event.date}
+                      time={event.time}
+                      className="hover:shadow-lg transition-shadow duration-300"
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full flex justify-center items-center py-6">
+                    <p className="w-full text-gray-500 text-sm text-center">
+                      No data available
+                    </p>
+                  </div>
+                )}
               </div>
+
               {/* Joined Groups */}
               <div className="px-6 flex justify-between mt-8">
                 <h2 className="text-xl font-semibold">Joined Groups</h2>
@@ -155,14 +188,22 @@ const CustomerDetail = () => {
                 </button>
               </div>
               <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                {profileGroupsData?.map((card) => (
-                  <JoinedGroupCard
-                    key={card.id}
-                    title={card.title}
-                    image={card.image}
-                    avatars={card.avatars}
-                  />
-                ))}
+                {profileGroupsData?.length > 0 ? (
+                  profileGroupsData.map((card) => (
+                    <JoinedGroupCard
+                      key={card.id}
+                      title={card.title}
+                      image={card.image}
+                      avatars={card.avatars}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full flex justify-center items-center py-6">
+                    <p className="w-full text-gray-500 text-sm text-center">
+                      No data available
+                    </p>
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -173,18 +214,22 @@ const CustomerDetail = () => {
         <div className="p-6">
           <h2 className="text-xl font-semibold">Events attended</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-            {eventsAttendedData.map((event) => (
-              <EventsAttendedCard
-                key={event.id}
-                image={event.image}
-                title={event.title}
-                subtitle={event.subtitle}
-                location={event.location}
-                date={event.date}
-                time={event.time}
-                className="hover:shadow-lg transition-shadow duration-300"
-              />
-            ))}
+            {eventsAttendedData?.length > 0 ? (
+              eventsAttendedData.map((event) => (
+                <EventsAttendedCard
+                  key={event.id}
+                  image={event.image}
+                  title={event.title}
+                  subtitle={event.subtitle}
+                  location={event.location}
+                  date={event.date}
+                  time={event.time}
+                  className="hover:shadow-lg transition-shadow duration-300"
+                />
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No data available</p>
+            )}
           </div>
         </div>
       )}
@@ -193,18 +238,18 @@ const CustomerDetail = () => {
         <div className="p-6">
           <h2 className="text-xl font-semibold">Groups</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-            {eventsAttendedData.map((event) => (
-              <EventsAttendedCard
-                key={event.id}
-                image={event.image}
-                title={event.title}
-                subtitle={event.subtitle}
-                location={event.location}
-                date={event.date}
-                time={event.time}
-                className="hover:shadow-lg transition-shadow duration-300"
-              />
-            ))}
+            {profileGroupsData?.length > 0 ? (
+              profileGroupsData.map((card) => (
+                <JoinedGroupCard
+                  key={card.id}
+                  title={card.title}
+                  image={card.image}
+                  avatars={card.avatars}
+                />
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No data available</p>
+            )}
           </div>
         </div>
       )}
