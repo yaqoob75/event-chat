@@ -71,22 +71,34 @@ const ProtectedLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="h-screen flex overflow-hidden bg-white">
+      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         setIsOpen={setSidebarOpen}
         ref={sidebarRef}
       />
-      <div className="transition-all duration-300 ease-in-out flex-1">
+
+      {/* Main Content Area */}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Fixed TopBar */}
         {showHeader && (
-          <TopBar
-            toggleSidebar={toggleSidebar}
-            isOpen={sidebarOpen}
-            headerText={headerText}
-            subHeaderText={subHeaderText}
-          />
+          <div className="sticky top-0 z-30">
+            <TopBar
+              toggleSidebar={toggleSidebar}
+              isOpen={sidebarOpen}
+              headerText={headerText}
+              subHeaderText={subHeaderText}
+            />
+          </div>
         )}
-        <main className={`${showHeader ? "p-6" : ""}`}>
+
+        {/* Scrollable Page Content */}
+        <main
+          className={`flex-1 overflow-y-auto ${
+            showHeader ? "p-6" : ""
+          } bg-white`}
+        >
           <Outlet context={{ updateHeaderConfig }} />
         </main>
       </div>
