@@ -15,8 +15,6 @@ const TopBar = ({ toggleSidebar, headerText = "Dashboard", subHeaderText }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user } = useSelector((state) => state?.auth);
 
-  console.log("usersass:", user);
-
   const handleLogout = () => {
     setDropdownOpen(false);
     dispatch(logout());

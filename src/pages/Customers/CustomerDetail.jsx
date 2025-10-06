@@ -52,7 +52,6 @@ const CustomerDetail = () => {
     title: item?.description,
     alt: "Icon",
   }));
-  console.log("user::", customerImges);
 
   // Map event data
   const profileEventData = events.map((item) => ({
@@ -94,7 +93,7 @@ const CustomerDetail = () => {
         setActiveTab={setActiveTab}
       />
 
-      {(isLoading || isFetching) ? (
+      {isLoading || isFetching ? (
         <CustomLoader />
       ) : (
         <>
@@ -257,7 +256,11 @@ const CustomerDetail = () => {
                     />
                   ))
                 ) : (
-                  <p className="text-gray-500 text-sm">No data available</p>
+                  <div className="col-span-full flex justify-center py-15">
+                    <p className="text-gray-500 text-base font-semibold text-center">
+                      No data available
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -278,7 +281,11 @@ const CustomerDetail = () => {
                     />
                   ))
                 ) : (
-                  <p className="text-gray-500 text-sm">No data available</p>
+                  <div className="col-span-full flex justify-center py-15">
+                    <p className="text-gray-500 text-base font-semibold text-center">
+                      No data available
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
