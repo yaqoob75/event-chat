@@ -15,7 +15,7 @@ export const api = createApi({
   tagTypes: ["eventChat"],
 
   endpoints: (builder) => ({
-    // Auth API's
+    // ================= AUTH =================
     login: builder.mutation({
       query: (payload) => ({
         url: "/userAuth/login",
@@ -51,42 +51,36 @@ export const api = createApi({
         body: payload,
       }),
     }),
-    // Customers
+
+    // ================= CUSTOMERS =================
     getAllCustomers: builder.query({
       query: ({ search = "", role = "", page = "", limit = 10 }) => ({
         url: "/user/getAllUser",
         method: "GET",
-        params: {
-          search,
-          role,
-          page,
-          limit,
-        },
+        params: { search, role, page, limit },
       }),
       providesTags: ["customers"],
     }),
-    getCustomerProfileDetail: builder.query({
-      query: ({ id }) => ({
-        url: `/user/getUserProfile/${id}`,
-        method: "GET",
-      }),
+
+    getCustomerDetail: builder.query({
+      query: ({ id, event, group }) => {
+        const params = {};
+        if (event) params.event = event;
+        if (group) params.group = group;
+        return {
+          url: `/user/getUserProfile/${id}`,
+          method: "GET",
+          params: Object.keys(params).length ? params : undefined,
+        };
+      },
     }),
-    getCustomerEventsDetail: builder.query({
-      query: ({ id }) => ({
-        url: `/user/getUserProfile/${id}`,
-        method: "GET",
-      }),
-    }),
-    // All Events
+
+    // ================= EVENTS =================
     getAllEvents: builder.query({
       query: ({ search = "", page = "", limit = 10 }) => ({
         url: "/event/searchEvents",
         method: "GET",
-        params: {
-          search,
-          page,
-          limit,
-        },
+        params: { search, page, limit },
       }),
       providesTags: ["allEvents"],
     }),
@@ -94,7 +88,7 @@ export const api = createApi({
 });
 
 export const {
-  // Auth API's
+  // Auth
   useLoginMutation,
   useForgotPasswordMutation,
   useVerifyOtpMutation,
@@ -102,8 +96,7 @@ export const {
   useUpdatePasswordMutation,
   // Customers
   useGetAllCustomersQuery,
-  useGetCustomerProfileDetailQuery,
-  useGetCustomerEventsDetailQuery,
-  // All Events
+  useGetCustomerDetailQuery,
+  // Events
   useGetAllEventsQuery,
 } = api;

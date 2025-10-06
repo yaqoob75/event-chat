@@ -11,14 +11,8 @@ import {
   JoinedGroupCard,
   CustomLoader,
 } from "../../components";
-import {
-  customerDetailProfileData,
-  customerImgCardData,
-  eventsAttendedData,
-  getFullName,
-  formatDate,
-} from "../../constants/home";
-import { useGetCustomerProfileDetailQuery } from "../../api/apiSlice";
+import { formatDate, getFullName } from "../../constants/home";
+import { useGetCustomerDetailQuery } from "../../api/apiSlice";
 
 const CustomerDetail = () => {
   const { id } = useParams();
@@ -34,28 +28,34 @@ const CustomerDetail = () => {
     subHeaderText: "Customer Details",
   });
 
-  const { data: profileData, isLoading: isProfileLoading } =
-    useGetCustomerProfileDetailQuery(
-      { id },
-      {
-        skip: activeTab !== 0,
-      }
-    );
+  // Conditionally handle API
+  const { data, isLoading, isFetching } = useGetCustomerDetailQuery(
+    activeTab === 1
+      ? { id, event: 1 }
+      : activeTab === 2
+      ? { id, group: 1 }
+      : { id },
+    {
+      skip: !id,
+    }
+  );
 
-  const profileGroupsData = profileData?.data?.groups?.map((item) => ({
+  const profileData = data?.data;
+  const events = profileData?.events || [];
+  const groups = profileData?.groups || [];
+  const user = profileData?.user || {};
+
+  // Profile data
+  const customerImges = user?.imageDetail?.map((item) => ({
     id: item?._id,
-    title: item?.groupName || "N/A",
     image: item?.image,
-    avatars: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...",
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...",
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?...",
-    ],
+    title: item?.description,
+    alt: "Icon",
   }));
+  console.log("user::", customerImges);
 
-  const profileEventData = profileData?.data?.events?.map((item) => ({
+  // Map event data
+  const profileEventData = events.map((item) => ({
     id: item?._id,
     image: item?.image,
     title: item?.eventName || "N/A",
@@ -65,14 +65,26 @@ const CustomerDetail = () => {
     time: "6-10pm",
   }));
 
-  // limit to 4 unless "View all"
   const displayedEvents = showAllEvents
     ? profileEventData
-    : profileEventData?.slice(0, 4);
+    : profileEventData.slice(0, 4);
+
+  // Map groups
+  const profileGroupsData = groups.map((item) => ({
+    id: item?._id,
+    title: item?.groupName || "N/A",
+    image: item?.image,
+    avatars: [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...",
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?...",
+    ],
+  }));
 
   const displayedGroups = showAllGroups
     ? profileGroupsData
-    : profileGroupsData?.slice(0, 4);
+    : profileGroupsData.slice(0, 4);
 
   return (
     <div>
@@ -82,43 +94,43 @@ const CustomerDetail = () => {
         setActiveTab={setActiveTab}
       />
 
-      {activeTab === 0 && (
+      {(isLoading || isFetching) ? (
+        <CustomLoader />
+      ) : (
         <>
-          {isProfileLoading ? (
-            <CustomLoader />
-          ) : (
+          {activeTab === 0 && (
             <>
-              {/* Profile Header */}
+              {/* ===== Profile Header ===== */}
               <div className="flex items-center gap-4 p-6 border-b border-gray-200">
                 <div className="flex items-center gap-4 w-[30%]">
                   <ProfileAvatar
-                    src={profileData?.data?.user?.profilePicture}
-                    alt={profileData?.data?.user?.firstName}
+                    src={user?.profilePicture}
+                    alt={user?.firstName}
                     size="xl"
                   />
                   <div className="flex-1">
                     <h2 className="text-xl font-semibold text-gray-900 mb-1 capitalize">
-                      {getFullName(profileData?.data?.user)}
+                      {getFullName(user)}
                     </h2>
                     <p className="text-gray-500 text-sm mb-3 capitalize">
-                      {profileData?.data?.user?.address || "N/A"}
+                      {user?.address || "N/A"}
                     </p>
                   </div>
                 </div>
                 <p className="text-gray-700 text-sm leading-relaxed w-[70%]">
-                  {customerDetailProfileData.description}
+                  {user?.role}
                 </p>
               </div>
 
-              {/* Content Area */}
+              {/* ===== Interests ===== */}
               <div className="px-6 py-2">
                 <div className="flex items-center mb-6">
                   <h3 className="text-xl font-semibold mb-3 w-[30%]">
                     Interests
                   </h3>
                   <div className="w-[70%]">
-                    {profileData?.data?.user?.interests?.length > 0 ? (
-                      <TagList tags={profileData?.data?.user?.interests} />
+                    {user?.interests?.length > 0 ? (
+                      <TagList tags={user.interests} />
                     ) : (
                       <p className="text-gray-500 text-sm text-center">
                         No data available
@@ -127,8 +139,8 @@ const CustomerDetail = () => {
                   </div>
                 </div>
 
-                {profileData?.data?.user?.profileAnswer?.length > 0 ? (
-                  profileData?.data?.user?.profileAnswer?.map((item, index) => (
+                {user?.profileAnswer?.length > 0 ? (
+                  user.profileAnswer.map((item, index) => (
                     <CustomerQA
                       key={item._id || index}
                       question={item.question}
@@ -142,10 +154,10 @@ const CustomerDetail = () => {
                 )}
               </div>
 
-              {/* Cards */}
-              <div className="px-6 flex gap-8">
-                {customerImgCardData?.length > 0 ? (
-                  customerImgCardData.map((card) => (
+              {/* ===== Cards ===== */}
+              <div className="px-6 grid grid-cols-3 gap-8">
+                {customerImges?.length > 0 ? (
+                  customerImges.map((card) => (
                     <CustomerImgCard
                       key={card.id}
                       image={card.image}
@@ -162,7 +174,7 @@ const CustomerDetail = () => {
 
               <div className="px-6 border-b border-gray-200 my-4"></div>
 
-              {/* Events attended */}
+              {/* ===== Events attended ===== */}
               <div className="px-6 flex justify-between mt-5">
                 <h2 className="text-xl font-semibold">Events attended</h2>
                 {profileEventData?.length > 4 && (
@@ -186,19 +198,16 @@ const CustomerDetail = () => {
                       location={event.location}
                       date={event.date}
                       time={event.time}
-                      className="hover:shadow-lg transition-shadow duration-300"
                     />
                   ))
                 ) : (
-                  <div className="col-span-full flex justify-center items-center py-6">
-                    <p className="w-full text-gray-500 text-sm text-center">
-                      No data available
-                    </p>
+                  <div className="col-span-full flex justify-center py-6">
+                    <p className="text-gray-500 text-sm">No data available</p>
                   </div>
                 )}
               </div>
 
-              {/* Joined Groups */}
+              {/* ===== Joined Groups ===== */}
               <div className="px-6 flex justify-between mt-8">
                 <h2 className="text-xl font-semibold">Joined Groups</h2>
                 {profileGroupsData?.length > 4 && (
@@ -222,60 +231,59 @@ const CustomerDetail = () => {
                     />
                   ))
                 ) : (
-                  <div className="col-span-full flex justify-center items-center py-6">
-                    <p className="w-full text-gray-500 text-sm text-center">
-                      No data available
-                    </p>
+                  <div className="col-span-full flex justify-center py-6">
+                    <p className="text-gray-500 text-sm">No data available</p>
                   </div>
                 )}
               </div>
             </>
           )}
+
+          {/* ===== Events Tab ===== */}
+          {activeTab === 1 && (
+            <div className="p-6">
+              <h2 className="text-xl font-semibold">Events attended</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                {profileEventData?.length > 0 ? (
+                  profileEventData.map((event) => (
+                    <EventsAttendedCard
+                      key={event.id}
+                      image={event.image}
+                      title={event.title}
+                      subtitle={event.subtitle}
+                      location={event.location}
+                      date={event.date}
+                      time={event.time}
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm">No data available</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ===== Groups Tab ===== */}
+          {activeTab === 2 && (
+            <div className="p-6">
+              <h2 className="text-xl font-semibold">Groups</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                {profileGroupsData?.length > 0 ? (
+                  profileGroupsData.map((card) => (
+                    <JoinedGroupCard
+                      key={card.id}
+                      title={card.title}
+                      image={card.image}
+                      avatars={card.avatars}
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm">No data available</p>
+                )}
+              </div>
+            </div>
+          )}
         </>
-      )}
-
-      {activeTab === 1 && (
-        <div className="p-6">
-          <h2 className="text-xl font-semibold">Events attended</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-            {eventsAttendedData?.length > 0 ? (
-              eventsAttendedData.map((event) => (
-                <EventsAttendedCard
-                  key={event.id}
-                  image={event.image}
-                  title={event.title}
-                  subtitle={event.subtitle}
-                  location={event.location}
-                  date={event.date}
-                  time={event.time}
-                  className="hover:shadow-lg transition-shadow duration-300"
-                />
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No data available</p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {activeTab === 2 && (
-        <div className="p-6">
-          <h2 className="text-xl font-semibold">Groups</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-            {profileGroupsData?.length > 0 ? (
-              profileGroupsData.map((card) => (
-                <JoinedGroupCard
-                  key={card.id}
-                  title={card.title}
-                  image={card.image}
-                  avatars={card.avatars}
-                />
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No data available</p>
-            )}
-          </div>
-        </div>
       )}
     </div>
   );

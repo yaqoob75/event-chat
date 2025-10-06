@@ -1,4 +1,5 @@
-import React from "react";
+import { useState } from "react";
+import { fallbackImage } from "../../constants/home";
 
 const EventsAttendedCard = ({
   image,
@@ -8,12 +9,19 @@ const EventsAttendedCard = ({
   date,
   time,
 }) => {
+  const [imgSrc, setImgSrc] = useState(image || fallbackImage);
+
+  const handleImageError = () => {
+    setImgSrc(fallbackImage);
+  };
+
   return (
-    <div className="rounded-lg p-4 border border-[#EEEEEE] bg-white hover:shadow-xl">
+    <div className="rounded-lg p-4 border border-[#EEEEEE] bg-white hover:shadow-xl transition-shadow duration-200">
       <div className="h-48">
         <img
-          src={image}
-          alt={title}
+          src={imgSrc}
+          alt="img"
+          onError={handleImageError}
           className="w-full h-full rounded-md object-cover"
         />
       </div>

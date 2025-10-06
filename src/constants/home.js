@@ -3,6 +3,7 @@ import sidebarLogo from "../assets/Icons/sidebarLogo.svg";
 import notificationIcon from "../assets/Icons/notificationIcon.svg";
 import imageUploader from "../assets/Icons/imageUploader.svg";
 import newRulesIcon from "../assets/Icons/newRulesIcon.svg";
+import fallbackImage from "../assets/Icons/fallbackImage.png";
 
 // Sidebar Icons
 import dashboardIcon from "../assets/SidebarIcons/dashboardIcon.svg";
@@ -23,7 +24,7 @@ export const sidebarItems = [
 export const customerFilterOptions = [
   { label: "Simple  User", value: "SimpleUser" },
   { label: "Business User", value: "BusinessUser" },
-  { label: "Admin", value: "Admin" },
+  { label: "All", value: "" },
 ];
 
 export const formatDate = (dateString) => {
@@ -64,35 +65,6 @@ export const genderOptions = [
   { value: "male", label: "Male" },
   { value: "female", label: "Female" },
   { value: "other", label: "Other" },
-];
-
-export const customerDetailProfileData = {
-  description:
-    "This is a profile description that users can add in their 'edit profile' tab. This is a profile description that users can add in their 'edit profile' tab. This is a profile description that users can add in their 'edit profile' tab.",
-};
-
-export const customerImgCardData = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    title: "In my 'self-care' era",
-    alt: "Person with straw hat on suspension bridge with arms raised",
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    title: "In my 'self-care' era",
-    alt: "Person with straw hat on suspension bridge with arms raised",
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    title: "In my 'self-care' era",
-    alt: "Person with straw hat on suspension bridge with arms raised",
-  },
 ];
 
 export const eventsAttendedData = [
@@ -573,4 +545,11 @@ export const chatsData = [
   },
 ];
 
-export { authLogo, sidebarLogo, notificationIcon, imageUploader, newRulesIcon };
+export {
+  authLogo,
+  sidebarLogo,
+  notificationIcon,
+  imageUploader,
+  newRulesIcon,
+  fallbackImage,
+};

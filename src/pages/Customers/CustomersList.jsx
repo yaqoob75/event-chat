@@ -6,9 +6,9 @@ import {
   UserAvatar,
   FilterAndSearchHeader,
 } from "../../components";
-import { useGetAllCustomersQuery } from "../../api/apiSlice";
-import { useDebounce } from "../../hooks/useDebounce";
 import { customerFilterOptions, formatDate } from "../../constants/home";
+import { useDebounce } from "../../hooks/useDebounce";
+import { useGetAllCustomersQuery } from "../../api/apiSlice";
 
 const CustomersList = () => {
   const navigate = useNavigate();
