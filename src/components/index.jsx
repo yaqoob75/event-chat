@@ -37,6 +37,7 @@ import NoRuleSetup from "./NoRuleSetup";
 import ChatSidebar from "./ChatSidebar";
 import ChatArea from "./ChatArea";
 import DirectorySidebar from "./DirectorySidebar";
+import Image from "./Image";
 
 export {
   TopBar,
@@ -78,4 +79,5 @@ export {
   ChatSidebar,
   ChatArea,
   DirectorySidebar,
+  Image,
 };

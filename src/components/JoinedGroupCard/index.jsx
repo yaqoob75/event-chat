@@ -1,13 +1,28 @@
-const JoinedGroupCard = ({ title, image, avatars }) => {
+import { useState } from "react";
+import { fallbackImage } from "../../constants/home";
+
+const JoinedGroupCard = ({ title, image, avatars = [] }) => {
   const maxVisible = 4;
   const visibleAvatars = avatars.slice(0, maxVisible);
   const remainingCount = avatars.length - maxVisible;
 
+  const [groupImgSrc, setGroupImgSrc] = useState(image || fallbackImage);
+  const handleGroupImgError = () => setGroupImgSrc(fallbackImage);
+  
+  const handleAvatarError = (e) => {
+    e.target.src = fallbackImage;
+  };
+
   return (
-    <div className="rounded-lg p-4 border border-[#EEEEEE] bg-white hover:shadow-xl">
-      {/* Image */}
+    <div className="rounded-lg p-4 border border-[#EEEEEE] bg-white hover:shadow-xl transition-shadow duration-200">
+      {/* Group Image */}
       <div className="relative h-64 rounded-md overflow-hidden mb-3">
-        <img src={image} alt={title} className="w-full h-full object-cover" />
+        <img
+          src={groupImgSrc}
+          alt={title || "Group Image"}
+          onError={handleGroupImgError}
+          className="w-full h-full object-cover"
+        />
       </div>
       {/* Card Content */}
       <div className="flex flex-col justify-between">
@@ -21,8 +36,9 @@ const JoinedGroupCard = ({ title, image, avatars }) => {
               style={{ zIndex: index + 1 }}
             >
               <img
-                src={avatar}
+                src={avatar || fallbackImage}
                 alt={`Avatar ${index + 1}`}
+                onError={handleAvatarError}
                 className="w-full h-full object-cover"
               />
             </div>
