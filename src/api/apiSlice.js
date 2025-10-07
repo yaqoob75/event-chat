@@ -78,11 +78,15 @@ export const api = createApi({
 
     // ================= EVENTS =================
     getAllEvents: builder.query({
-      query: ({ search = "", page = "", limit = 10 }) => ({
-        url: "/event/searchEvents",
-        method: "GET",
-        params: { search, page, limit },
-      }),
+      query: ({ search = "", page = "", limit = 10, coHost }) => {
+        const params = { search, page, limit };
+        if (coHost) params.coHOst = coHost;
+        return {
+          url: "/event/searchEvents",
+          method: "GET",
+          params,
+        };
+      },
       providesTags: ["allEvents"],
     }),
     // ================= GROUPS =================

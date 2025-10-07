@@ -5,7 +5,11 @@ import { BiSolidUserPin } from "react-icons/bi";
 import { IoSettingsSharp, IoLogOut } from "react-icons/io5";
 import { FiMenu, FiChevronDown } from "react-icons/fi";
 import { RiArrowRightSLine } from "react-icons/ri";
-import { notificationIcon, getFullName } from "../../constants/home";
+import {
+  notificationIcon,
+  getFullName,
+  formatMemberType,
+} from "../../constants/home";
 import { logout } from "../../store/auth/authSlice";
 import Image from "../Image";
 
@@ -82,7 +86,7 @@ const TopBar = ({ toggleSidebar, headerText = "Dashboard", subHeaderText }) => {
                   {fullName}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {user?.role || "N/A"}
+                  {formatMemberType(user?.role)}
                 </div>
               </div>
 

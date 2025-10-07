@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import useHeader from "../../hooks/useHeader";
 import { ActiveTabSwitch, FilterSelect, SearchInput } from "../../components";
 import { LuListFilter } from "react-icons/lu";
@@ -22,6 +23,9 @@ const EventsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const user = useSelector((state) => state.auth?.user);
+  const userId = user?._id;
+
   const toggleFilter = () => setIsFilterVisible((prev) => !prev);
   const handleFilterChange = (option) => setSelectedFilter(option);
   const handleSearchChange = (e) => setSearchText(e.target.value);
@@ -33,29 +37,24 @@ const EventsList = () => {
   });
 
   const {
-    data: allEventsData,
-    isLoading: isAllEventLoading,
-    isFetching: isAllEventFetching,
-  } = useGetAllEventsQuery(
-    {
-      search: debouncedSearchText,
-      page: currentPage,
-      limit: 10,
-    },
-    {
-      skip: activeTab !== 0,
-    }
-  );
+    data: eventsData,
+    isLoading,
+    isFetching,
+  } = useGetAllEventsQuery({
+    search: debouncedSearchText,
+    page: currentPage,
+    limit: 10,
+    coHost: activeTab === 1 ? userId : undefined,
+  });
 
   useEffect(() => {
-    if (allEventsData) {
-      setTotalPages(allEventsData?.data?.pages);
+    if (eventsData) {
+      setTotalPages(eventsData?.data?.pages || 1);
     }
-  }, [allEventsData]);
+  }, [eventsData]);
 
-
-  const allEventsList = Array.isArray(allEventsData?.data?.events)
-    ? allEventsData?.data?.events.map((item) => ({
+  const eventsList = Array.isArray(eventsData?.data?.events)
+    ? eventsData?.data?.events.map((item) => ({
         id: item?._id,
         event: item?.eventName,
         owner: { name: item?.eventName, avatar: item?.image },
@@ -93,13 +92,8 @@ const EventsList = () => {
     },
   ];
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  const handleRowClick = () => {
-    navigate(`/events/event-detail`);
-  };
+  const handlePageChange = (page) => setCurrentPage(page);
+  const handleRowClick = () => navigate(`/events/event-detail`);
 
   return (
     <>
@@ -151,13 +145,13 @@ const EventsList = () => {
 
       <ReusableTable
         columns={columns}
-        data={allEventsList}
-        isPagination={true}
+        data={eventsList}
+        isPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
         onRowClick={handleRowClick}
-        loading={isAllEventLoading || isAllEventFetching}
+        loading={isLoading || isFetching}
       />
     </>
   );
