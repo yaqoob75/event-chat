@@ -24,7 +24,7 @@ const CustomerProfileSection = ({ user }) => {
           </div>
         </div>
         <p className="text-gray-700 text-sm leading-relaxed w-[70%]">
-          {user?.role}
+          {user?.bio}
         </p>
       </div>
 

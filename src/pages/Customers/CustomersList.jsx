@@ -6,7 +6,11 @@ import {
   UserAvatar,
   FilterAndSearchHeader,
 } from "../../components";
-import { customerFilterOptions, formatDate } from "../../constants/home";
+import {
+  customerFilterOptions,
+  formatDate,
+  formatMemberType,
+} from "../../constants/home";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useGetAllCustomersQuery } from "../../api/apiSlice";
 
@@ -54,7 +58,7 @@ const CustomersList = () => {
           },
           email: item?.email || "N/A",
           phoneNumber: item?.phoneNumber || "N/A",
-          memberType: item?.role || "N/A",
+          memberType: formatMemberType(item?.role),
           memberSince: formatDate(item?.createdAt),
           lastCheckIn: item?.lastCheckIn || "N/A",
         };

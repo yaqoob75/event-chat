@@ -27,6 +27,11 @@ export const customerFilterOptions = [
   { label: "All", value: "" },
 ];
 
+export const formatMemberType = (type) => {
+  if (!type) return "N/A";
+  return type.replace(/([a-z])([A-Z])/g, "$1 $2");
+};
+
 export const formatDate = (dateString) => {
   if (!dateString) return "N/A";
 

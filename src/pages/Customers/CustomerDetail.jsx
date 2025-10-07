@@ -39,8 +39,14 @@ const CustomerDetail = () => {
   const profileData = data?.data || {};
   const user = profileData?.user || {};
 
-  const events = useMemo(() => profileData?.events || [], [profileData?.events]);
-  const groups = useMemo(() => profileData?.groups || [], [profileData?.groups]);
+  const events = useMemo(
+    () => profileData?.events || [],
+    [profileData?.events]
+  );
+  const groups = useMemo(
+    () => profileData?.groups || [],
+    [profileData?.groups]
+  );
 
   useEffect(() => {
     if (!events.length) return;
@@ -87,6 +93,10 @@ const CustomerDetail = () => {
           "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...",
           "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...",
           "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?...",
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...",
+          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...",
+          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?...",
         ],
       })),
     [groups]
@@ -94,7 +104,11 @@ const CustomerDetail = () => {
 
   return (
     <div>
-      <TabSwitch tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <TabSwitch
+        tabs={tabs}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
 
       {isLoading || isFetching ? (
         <CustomLoader />
@@ -120,7 +134,10 @@ const CustomerDetail = () => {
           )}
 
           {activeTab === 1 && (
-            <CustomerEventsSection title="Events attended" events={formattedEvents} />
+            <CustomerEventsSection
+              title="Events attended"
+              events={formattedEvents}
+            />
           )}
 
           {activeTab === 2 && (
