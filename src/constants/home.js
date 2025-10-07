@@ -49,18 +49,17 @@ export const getFullName = (user) => {
 
 export const formatEventDate = (dateString) => {
   if (!dateString || dateString === "null" || dateString === "undefined") {
-    return "N/A";
+    return "";
   }
 
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return "N/A";
 
-  const dayName = date.toLocaleString("en-GB", { weekday: "long" });
+  const dayName = date.toLocaleString("en-GB", { weekday: "short" });
   const day = date.getDate();
-  const month = date.toLocaleString("en-GB", { month: "long" });
+  const month = date.toLocaleString("en-GB", { month: "short" });
 
   let hours = date.getHours();
-  const minutes = date.getMinutes();
   const ampm = hours >= 12 ? "pm" : "am";
 
   hours = hours % 12 || 12;

@@ -38,6 +38,11 @@ import ChatSidebar from "./ChatSidebar";
 import ChatArea from "./ChatArea";
 import DirectorySidebar from "./DirectorySidebar";
 import Image from "./Image";
+// Customer Components
+import CustomerProfileSection from "./CustomerProfileSection";
+import CustomerProfileImages from "./CustomerProfileImages";
+import CustomerEventsSection from "./CustomerEventsSection";
+import CustomerGroupsSection from "./CustomerGroupsSection";
 
 export {
   TopBar,
@@ -80,4 +85,9 @@ export {
   ChatArea,
   DirectorySidebar,
   Image,
+  // Customer Components
+  CustomerProfileSection,
+  CustomerProfileImages,
+  CustomerEventsSection,
+  CustomerGroupsSection,
 };

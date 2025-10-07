@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://elloapp.duckdns.org",
+    // baseUrl: "https://elloapp.duckdns.org",
+    baseUrl: "https://1a113cbc1f4d.ngrok-free.app",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) {
