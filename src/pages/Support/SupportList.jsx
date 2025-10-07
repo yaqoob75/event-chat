@@ -7,19 +7,31 @@ import {
   StatusBadge,
   FilterAndSearchHeader,
 } from "../../components";
+import { useDebounce } from "../../hooks/useDebounce";
+import { useGetAllSupportsQuery } from "../../api/apiSlice";
 
 const SupportList = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 1;
-
+  const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [isActiveFilter, setIsActiveFilter] = useState(false);
+  const debouncedSearchText = useDebounce(searchText, 1000);
 
   useHeader({
     isHeader: true,
     headerText: "Support",
+  });
+
+  const {
+    data: supportsData,
+    isLoading,
+    isFetching,
+  } = useGetAllSupportsQuery({
+    search: debouncedSearchText,
+    page: currentPage,
+    limit: 10,
   });
 
   const data = [
@@ -127,6 +139,7 @@ const SupportList = () => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
         onRowClick={handleRowClick}
+        loading={isLoading || isFetching}
       />
     </div>
   );

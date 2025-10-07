@@ -47,6 +47,28 @@ export const getFullName = (user) => {
   return fullName || "N/A";
 };
 
+export const formatEventDate = (dateString) => {
+  if (!dateString || dateString === "null" || dateString === "undefined") {
+    return "N/A";
+  }
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "N/A";
+
+  const dayName = date.toLocaleString("en-GB", { weekday: "long" });
+  const day = date.getDate();
+  const month = date.toLocaleString("en-GB", { month: "long" });
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "pm" : "am";
+
+  hours = hours % 12 || 12;
+  const endHour = (hours + 4) % 12 || 12;
+
+  return `${dayName} ${day} ${month}, ${hours}-${endHour}${ampm}`;
+};
+
 export const cityOptions = [
   { value: "new-york", label: "New York" },
   { value: "los-angeles", label: "Los Angeles" },

@@ -7,7 +7,6 @@ const EventsAttendedCard = ({
   subtitle,
   location,
   date,
-  time,
 }) => {
   const [imgSrc, setImgSrc] = useState(image || fallbackImage);
 
@@ -33,9 +32,8 @@ const EventsAttendedCard = ({
             <span>Location {location}</span>
             <div className="flex items-center gap-1 mx-1">
               <span className="h-1 w-1 rounded-full bg-gray-600"></span>
-              <span>{date}, </span>
+              <span>{date}</span>
             </div>
-            <span>{time} </span>
           </div>
         </div>
       </div>

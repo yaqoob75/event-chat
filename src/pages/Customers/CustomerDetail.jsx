@@ -11,7 +11,7 @@ import {
   JoinedGroupCard,
   CustomLoader,
 } from "../../components";
-import { formatDate, getFullName } from "../../constants/home";
+import { formatEventDate, getFullName } from "../../constants/home";
 import { useGetCustomerDetailQuery } from "../../api/apiSlice";
 
 const CustomerDetail = () => {
@@ -58,9 +58,9 @@ const CustomerDetail = () => {
     id: item?._id,
     image: item?.image,
     title: item?.eventName || "N/A",
-    subtitle: item?.eventCategory || "N/A",
+    subtitle: item?.eventType || "N/A",
     location: "TBA",
-    date: formatDate(item?.endDate),
+    date: formatEventDate(item?.endDate),
     time: "6-10pm",
   }));
 
@@ -196,7 +196,6 @@ const CustomerDetail = () => {
                       subtitle={event.subtitle}
                       location={event.location}
                       date={event.date}
-                      time={event.time}
                     />
                   ))
                 ) : (

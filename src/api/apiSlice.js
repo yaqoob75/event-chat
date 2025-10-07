@@ -84,6 +84,17 @@ export const api = createApi({
       }),
       providesTags: ["allEvents"],
     }),
+    // ================= GROUPS =================
+
+    // ================= SUPPORTS =================
+    getAllSupports: builder.query({
+      query: ({ search = "", page = "", limit = 10 }) => ({
+        url: "/dispute/getDispute",
+        method: "GET",
+        params: { search, page, limit },
+      }),
+      providesTags: ["allEvents"],
+    }),
   }),
 });
 
@@ -99,4 +110,6 @@ export const {
   useGetCustomerDetailQuery,
   // Events
   useGetAllEventsQuery,
+  // Supports
+  useGetAllSupportsQuery,
 } = api;

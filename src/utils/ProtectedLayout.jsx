@@ -78,7 +78,6 @@ const ProtectedLayout = () => {
         setIsOpen={setSidebarOpen}
         ref={sidebarRef}
       />
-
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Fixed TopBar */}
@@ -92,11 +91,10 @@ const ProtectedLayout = () => {
             />
           </div>
         )}
-
         {/* Scrollable Page Content */}
         <main
           className={`flex-1 overflow-y-auto ${
-            showHeader ? "p-6" : ""
+            showHeader ? "px-6 py-3" : ""
           } bg-white`}
         >
           <Outlet context={{ updateHeaderConfig }} />
