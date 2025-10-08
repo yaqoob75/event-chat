@@ -103,7 +103,25 @@ export const api = createApi({
         };
       },
     }),
+
     // ================= GROUPS =================
+    getAllGroups: builder.query({
+      query: ({ search = "", page = "", limit = 10 }) => ({
+        url: "/group/getAllGroup",
+        method: "GET",
+        params: { search, page, limit },
+      }),
+      providesTags: ["allGroups"],
+    }),
+
+    getAllMyGroups: builder.query({
+      query: ({ id, search = "", page = "", limit = 10 }) => ({
+        url: `/group/groupById?${id}`,
+        method: "GET",
+        params: { search, page, limit },
+      }),
+      providesTags: ["allMyGroups"],
+    }),
 
     // ================= SUPPORTS =================
     getAllSupports: builder.query({
@@ -130,6 +148,9 @@ export const {
   // Events
   useGetAllEventsQuery,
   useGetEventDetailQuery,
+  // Groups
+  useGetAllGroupsQuery,
+  useGetAllMyGroupsQuery,
   // Supports
   useGetAllSupportsQuery,
 } = api;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { LuListFilter } from "react-icons/lu";
 import useHeader from "../../hooks/useHeader";
@@ -10,23 +10,89 @@ import {
   CustomButton,
   UserAvatar,
   StatusBadge,
+  CustomLoader,
 } from "../../components";
 import { subscriptionFilterOptions } from "../../constants/home";
+import {
+  useGetAllGroupsQuery,
+  useGetAllMyGroupsQuery,
+} from "../../api/apiSlice";
 
 const GroupsList = () => {
   useHeader({
     isHeader: true,
     headerText: "Groups",
   });
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10;
+
   const toggleFilter = () => setIsFilterVisible((prev) => !prev);
   const handleFilterChange = (option) => setSelectedFilter(option);
   const handleSearchChange = (e) => setSearchText(e.target.value);
+
+  // === API Calls based on tab ===
+  const {
+    data: allGroupsData,
+    isLoading: isAllGroupsLoading,
+    isFetching: isAllGroupsFetching,
+  } = useGetAllGroupsQuery(
+    {
+      search: searchText,
+      page: currentPage,
+      limit,
+    },
+    { skip: activeTab !== 0 } // skip unless tab 0
+  );
+
+  const {
+    data: myGroupsData,
+    isLoading: isMyGroupsLoading,
+    isFetching: isMyGroupsFetching,
+  } = useGetAllMyGroupsQuery(
+    {
+      search: searchText,
+      page: currentPage,
+      limit,
+      id: "123", // optional — replace with logged-in user ID if needed
+    },
+    { skip: activeTab !== 1 } // skip unless tab 1
+  );
+
+  const loading =
+    isAllGroupsLoading ||
+    isMyGroupsLoading ||
+    isAllGroupsFetching ||
+    isMyGroupsFetching;
+
+  // === Combine table data dynamically ===
+  const apiData = useMemo(() => {
+    const fetchedData =
+      activeTab === 0
+        ? allGroupsData?.data || []
+        : myGroupsData?.data || [];
+
+    // transform into the format table expects
+    return fetchedData.map((group) => ({
+      id: group?._id,
+      group: group?.groupName || "N/A",
+      owner: {
+        name: group?.ownerName || "Unknown",
+        avatar: group?.ownerAvatar || "",
+      },
+      groupType: group?.groupType || "N/A",
+      category: group?.category || "N/A",
+      created: group?.createdAt
+        ? new Date(group.createdAt).toLocaleString()
+        : "N/A",
+      status: group?.status || "Active",
+    }));
+  }, [activeTab, allGroupsData, myGroupsData]);
 
   const columns = [
     { key: "group", label: "Group", sortable: true },
@@ -50,38 +116,8 @@ const GroupsList = () => {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      group: "Lorem Ipsum",
-      owner: { name: "Olivia Rhye", avatar: "/avatars/olivia.png" },
-      groupType: "Private",
-      category: "Group",
-      created: "Jan 6, 2025 11:58",
-      status: "Active",
-    },
-    {
-      id: 2,
-      group: "Lorem Ipsum",
-      owner: { name: "Phoenix Baker", avatar: "" },
-      groupType: "Public",
-      category: "Individual",
-      created: "Jan 6, 2025 11:58",
-      status: "Active",
-    },
-    {
-      id: 3,
-      group: "Lorem Ipsum",
-      owner: { name: "Candice Wu", avatar: "/avatars/olivia.png" },
-      groupType: "Public",
-      category: "Group",
-      created: "Jan 6, 2025 11:58",
-      status: "Expired",
-    },
-  ];
-
-  const handleRowClick = () => {
-    navigate(`/groups/group-detail`);
+  const handleRowClick = (row) => {
+    navigate(`/groups/group-detail/${row.id}`);
   };
 
   return (
@@ -92,6 +128,7 @@ const GroupsList = () => {
           activeIndex={activeTab}
           onChange={setActiveTab}
         />
+
         <div className="flex flex-col sm:flex-row items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto">
           <CustomButton
             btnTitle="Filters"
@@ -132,15 +169,19 @@ const GroupsList = () => {
         </div>
       </div>
 
-      <ReusableTable
-        columns={columns}
-        data={data}
-        isPagination={true}
-        currentPage={currentPage}
-        totalPages={1}
-        onPageChange={setCurrentPage}
-        onRowClick={handleRowClick}
-      />
+      {loading ? (
+        <CustomLoader />
+      ) : (
+        <ReusableTable
+          columns={columns}
+          data={apiData}
+          isPagination={true}
+          currentPage={currentPage}
+          totalPages={1}
+          onPageChange={setCurrentPage}
+          onRowClick={handleRowClick}
+        />
+      )}
     </>
   );
 };
