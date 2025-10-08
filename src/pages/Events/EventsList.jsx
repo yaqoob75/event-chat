@@ -78,7 +78,7 @@ const EventsList = () => {
     : [];
 
   const columns = [
-    { key: "event", label: "Event", sortable: true },
+    { key: "event", label: "Event", sortable: true, isCapitalize: true },
     ...(activeTab === 0
       ? [
           {
@@ -102,7 +102,7 @@ const EventsList = () => {
   ];
 
   const handlePageChange = (page) => setCurrentPage(page);
-  const handleRowClick = () => navigate(`/events/event-detail`);
+  const handleRowClick = (data) => navigate(`/events/event-detail/${data.id}`);
 
   return (
     <>

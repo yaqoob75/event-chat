@@ -46,7 +46,7 @@ function App() {
             element={<CustomerDetail />}
           />
           <Route path={"/events"} element={<EventsList />} />
-          <Route path={"/events/event-detail"} element={<EventDetail />} />
+          <Route path={"/events/event-detail/:id"} element={<EventDetail />} />
           <Route path={"/events/add-event"} element={<AddEvent />} />
           <Route path={"/groups"} element={<GroupsList />} />
           <Route path={"/groups/group-detail"} element={<GroupDetail />} />

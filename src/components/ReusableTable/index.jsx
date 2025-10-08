@@ -50,13 +50,15 @@ const ReusableTable = ({
                 {data.map((row, index) => (
                   <tr
                     key={index}
-                    className={`hover:bg-gray-50 cursor-pointer`}
+                    className="hover:bg-gray-50 cursor-pointer"
                     onClick={() => onRowClick && onRowClick(row)}
                   >
                     {columns.map((column) => (
                       <td
                         key={column.key}
-                        className="px-6 py-4 text-sm font-normal text-[#535862] whitespace-nowrap"
+                        className={`px-6 py-4 text-sm font-normal text-[#535862] whitespace-nowrap ${
+                          column.isCapitalize ? "capitalize" : ""
+                        }`}
                       >
                         {column.render
                           ? column.render(row[column.key], row)

@@ -95,6 +95,14 @@ export const api = createApi({
       },
       providesTags: ["allEvents"],
     }),
+    getEventDetail: builder.query({
+      query: ({ id }) => {
+        return {
+          url: `/event/eventById?${id}`,
+          method: "GET",
+        };
+      },
+    }),
     // ================= GROUPS =================
 
     // ================= SUPPORTS =================
@@ -121,6 +129,7 @@ export const {
   useGetCustomerDetailQuery,
   // Events
   useGetAllEventsQuery,
+  useGetEventDetailQuery,
   // Supports
   useGetAllSupportsQuery,
 } = api;
