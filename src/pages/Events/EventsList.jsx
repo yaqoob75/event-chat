@@ -10,7 +10,7 @@ import {
   UserAvatar,
   StatusBadge,
 } from "../../components";
-import { subscriptionFilterOptions, formatDate } from "../../constants/home";
+import { formatDate, eventsFilterOptions } from "../../constants/home";
 import { useGetAllEventsQuery } from "../../api/apiSlice";
 import { useDebounce } from "../../hooks/useDebounce";
 
@@ -26,7 +26,15 @@ const EventsList = () => {
   const user = useSelector((state) => state.auth?.user);
   const userId = user?._id;
 
-  const toggleFilter = () => setIsFilterVisible((prev) => !prev);
+  const handleToggleFilter = () => {
+    setIsFilterVisible((prev) => {
+      const newState = !prev;
+      if (!newState) {
+        setSelectedFilter(null);
+      }
+      return newState;
+    });
+  };
   const handleFilterChange = (option) => setSelectedFilter(option);
   const handleSearchChange = (e) => setSearchText(e.target.value);
   const debouncedSearchText = useDebounce(searchText, 1000);
@@ -41,7 +49,8 @@ const EventsList = () => {
     isLoading,
     isFetching,
   } = useGetAllEventsQuery({
-    search: debouncedSearchText,
+    eventName: debouncedSearchText,
+    eventType: selectedFilter?.value,
     page: currentPage,
     limit: 10,
     coHost: activeTab === 1 ? userId : undefined,
@@ -60,7 +69,7 @@ const EventsList = () => {
         owner: { name: item?.eventName, avatar: item?.image },
         isVerified: true,
         type: item?.eventType,
-        domain: "Group",
+        // domain: "Group",
         created: formatDate(item.createdAt),
         startDate: formatDate(item.startDate),
         endDate: formatDate(item.endDate),
@@ -80,7 +89,7 @@ const EventsList = () => {
         ]
       : []),
     { key: "type", label: "Event Type", sortable: true },
-    { key: "domain", label: "Domain", sortable: true },
+    // { key: "domain", label: "Domain", sortable: true },
     { key: "created", label: "Created", sortable: true },
     { key: "startDate", label: "Start Date", sortable: true },
     { key: "endDate", label: "End Date", sortable: true },
@@ -109,7 +118,7 @@ const EventsList = () => {
             icon={<LuListFilter className="h-5 w-5" strokeWidth={2} />}
             borderRadius="rounded-lg"
             width="w-full sm:w-[8rem]"
-            onClick={toggleFilter}
+            onClick={handleToggleFilter}
             fontWeight="font-semibold"
             hoverClass="hover:bg-gray-100"
           />
@@ -117,7 +126,7 @@ const EventsList = () => {
             <FilterSelect
               id="filterBy"
               value={selectedFilter}
-              options={subscriptionFilterOptions}
+              options={eventsFilterOptions}
               onSelect={handleFilterChange}
               placeholder="Select..."
               width="w-full sm:w-[14rem]"

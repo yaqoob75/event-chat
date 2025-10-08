@@ -14,7 +14,7 @@ const authSlice = createSlice({
   reducers: {
     updateUser: (state, action) => {
       state.token = action.payload?.data?.token;
-      state.user = action.payload?.data?.user;
+      state.user = action.payload?.data?.updatedUser;
       state.isAuthenticated = true;
     },
     setEmail: (state, action) => {

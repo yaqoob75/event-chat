@@ -226,6 +226,12 @@ export const subscriptionFilterOptions = [
   { label: "All", value: "all" },
 ];
 
+export const eventsFilterOptions = [
+  { label: "Public", value: "Public" },
+  { label: "Private", value: "Private" },
+  { label: "All", value: "" },
+];
+
 export const chatsData = [
   {
     id: 1,

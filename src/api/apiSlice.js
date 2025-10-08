@@ -78,8 +78,14 @@ export const api = createApi({
 
     // ================= EVENTS =================
     getAllEvents: builder.query({
-      query: ({ search = "", page = "", limit = 10, coHost }) => {
-        const params = { search, page, limit };
+      query: ({
+        eventName = "",
+        eventType = "",
+        page = "",
+        limit = 10,
+        coHost,
+      }) => {
+        const params = { eventName, eventType, page, limit };
         if (coHost) params.coHOst = coHost;
         return {
           url: "/event/searchEvents",
