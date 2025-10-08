@@ -24,6 +24,7 @@ const CustomerGroupsSection = ({ title, groups = [], showAll, setShowAll }) => {
             <JoinedGroupCard
               key={card.id}
               title={card.title}
+              groupType={card.groupType}
               image={card.image}
               avatars={card.avatars}
             />

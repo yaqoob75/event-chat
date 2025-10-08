@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { fallbackImage } from "../../constants/home";
 
-const JoinedGroupCard = ({ title, image, avatars = [] }) => {
+const JoinedGroupCard = ({ title, groupType, image, avatars = [] }) => {
   const maxVisible = 4;
   const visibleAvatars = avatars.slice(0, maxVisible);
   const remainingCount = avatars.length - maxVisible;
 
   const [groupImgSrc, setGroupImgSrc] = useState(image || fallbackImage);
   const handleGroupImgError = () => setGroupImgSrc(fallbackImage);
-  
+
   const handleAvatarError = (e) => {
     e.target.src = fallbackImage;
   };
@@ -26,6 +26,7 @@ const JoinedGroupCard = ({ title, image, avatars = [] }) => {
       </div>
       {/* Card Content */}
       <div className="flex flex-col justify-between">
+        <p className="text-sm text-[#1A1A1A]">{groupType}</p>
         <h3 className="text-base font-medium mb-3 capitalize">{title}</h3>
         {/* Avatars */}
         <div className="flex items-center -space-x-1">

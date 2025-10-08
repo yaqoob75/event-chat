@@ -18,7 +18,7 @@ const CustomerImgCard = ({ image, title, alt }) => {
           className="w-full h-[397px] rounded-lg object-fit"
         />
       </div>
-      <h3 className="text-center text-base mt-3 font-normal">
+      <h3 className="text-center text-base mt-3 font-normal capitalize">
         {title || "No description available"}
       </h3>
     </div>

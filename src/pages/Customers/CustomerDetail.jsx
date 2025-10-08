@@ -87,17 +87,9 @@ const CustomerDetail = () => {
       groups.map((item) => ({
         id: item?._id,
         title: item?.groupName || "N/A",
+        groupType: item?.groupType || "N/A",
         image: item?.image,
-        avatars: [
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...",
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...",
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?...",
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...",
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...",
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...",
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?...",
-        ],
+        avatars: [],
       })),
     [groups]
   );
@@ -137,11 +129,18 @@ const CustomerDetail = () => {
             <CustomerEventsSection
               title="Events attended"
               events={formattedEvents}
+              showAll={true}
+              setShowAll={() => {}}
             />
           )}
 
           {activeTab === 2 && (
-            <CustomerGroupsSection title="Groups" groups={formattedGroups} />
+            <CustomerGroupsSection
+              title="Groups"
+              groups={formattedGroups}
+              showAll={true}
+              setShowAll={() => {}}
+            />
           )}
         </>
       )}

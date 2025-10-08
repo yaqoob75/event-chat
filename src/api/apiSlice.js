@@ -24,6 +24,7 @@ export const api = createApi({
         body: payload,
       }),
     }),
+
     forgotPassword: builder.mutation({
       query: (payload) => ({
         url: "/userAuth/sendMailForResetPassword",
@@ -31,6 +32,7 @@ export const api = createApi({
         body: payload,
       }),
     }),
+
     verifyOtp: builder.mutation({
       query: (payload) => ({
         url: "/userAuth/verifyOtp",
@@ -38,6 +40,7 @@ export const api = createApi({
         body: payload,
       }),
     }),
+
     resetPassword: builder.mutation({
       query: (payload) => ({
         url: "/userAuth/resetPassword",
@@ -45,6 +48,7 @@ export const api = createApi({
         body: payload,
       }),
     }),
+
     updatePassword: builder.mutation({
       query: (payload) => ({
         url: "/userAuth/updatePassword",
@@ -95,6 +99,7 @@ export const api = createApi({
       },
       providesTags: ["allEvents"],
     }),
+
     getEventDetail: builder.query({
       query: ({ id }) => {
         return {
@@ -130,7 +135,7 @@ export const api = createApi({
         method: "GET",
         params: { search, page, limit },
       }),
-      providesTags: ["allEvents"],
+      providesTags: ["allSupports"],
     }),
   }),
 });
