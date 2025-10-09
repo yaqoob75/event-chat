@@ -15,7 +15,7 @@ const LocationMap = ({ location }) => {
 
   return (
     <div className="rounded-xl shadow-lg overflow-hidden">
-      <GoogleMap mapContainerStyle={containerStyle} center={location} zoom={14}>
+      <GoogleMap mapContainerStyle={containerStyle} center={location} zoom={15}>
         <Marker position={location} />
       </GoogleMap>
     </div>
