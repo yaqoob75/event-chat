@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Field } from "formik";
-import { MapPin, X } from "lucide-react";
+import { SlLocationPin } from "react-icons/sl";
+import { RxCross2 } from "react-icons/rx";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -26,61 +27,49 @@ const LocationSelectField = ({
     clearSuggestions,
   } = usePlacesAutocomplete({
     debounce: 300,
-    requestOptions: {
-      // You can add more options here like:
-      // types: ['(cities)'],
-      // componentRestrictions: { country: 'us' }
-    },
   });
 
-  // Close dropdown when clicking outside
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleInputChange = (e, setFieldValue) => {
+  // ✅ only updates input (not formik)
+  const handleInputChange = (e) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-    setFieldValue(name, newValue);
     setValue(newValue);
-    setIsOpen(true);
+    if (newValue.trim().length > 0) setIsOpen(true);
+    else setIsOpen(false);
   };
 
+  // ✅ sets full object in Formik on select
   const handleSelectLocation = async (suggestion, setFieldValue) => {
     try {
       setValue(suggestion.description, false);
-      setInputValue(suggestion.description);
-      setFieldValue(name, suggestion.description);
       clearSuggestions();
       setIsOpen(false);
 
-      // Get detailed location data
       const results = await getGeocode({ address: suggestion.description });
       const result = results[0];
       const { lat, lng } = getLatLng(result);
+      const postalCode = getZipCode(result, true)?.toString() || "";
 
       let city = "";
       let state = "";
       let country = "";
-      let postalCode = getZipCode(result, true)?.toString() || "";
 
       result.address_components.forEach((component) => {
-        if (component.types.includes("locality")) {
-          city = component.long_name;
-        }
-        if (component.types.includes("administrative_area_level_1")) {
+        if (component.types.includes("locality")) city = component.long_name;
+        if (component.types.includes("administrative_area_level_1"))
           state = component.long_name;
-        }
-        if (component.types.includes("country")) {
-          country = component.long_name;
-        }
+        if (component.types.includes("country")) country = component.long_name;
       });
 
       const locationData = {
@@ -93,137 +82,132 @@ const LocationSelectField = ({
         postalCode,
       };
 
-      if (onLocationSelect) {
-        onLocationSelect(locationData);
-      }
+      // ✅ only now set Formik value
+      setFieldValue(name, locationData);
+      setInputValue(locationData.description);
+
+      if (onLocationSelect) onLocationSelect(locationData);
     } catch (error) {
       console.error("Error selecting location:", error);
-      // Still set the basic value even if geocoding fails
-      if (onLocationSelect) {
-        onLocationSelect({
-          description: suggestion.description,
-          formattedAddress: suggestion.description,
-        });
-      }
+      const fallback = {
+        description: suggestion.description,
+        formattedAddress: suggestion.description,
+      };
+      setFieldValue(name, fallback);
+      setInputValue(suggestion.description);
     }
   };
 
   const handleClear = (setFieldValue) => {
     setInputValue("");
-    setFieldValue(name, "");
     setValue("");
     clearSuggestions();
     setIsOpen(false);
-
-    if (onLocationSelect) {
-      onLocationSelect(null);
-    }
+    setFieldValue(name, null);
+    if (onLocationSelect) onLocationSelect(null);
   };
 
-  const handleFocus = () => {
-    setIsOpen(true);
-    if (inputValue && inputValue.length >= 2) {
-      setValue(inputValue);
-    }
-  };
+  const hasValidSuggestions = status === "OK" && data?.length > 0;
 
   return (
     <div className="w-full">
       <Field name={name}>
-        {({ field, meta, form }) => (
-          <div className="relative" ref={wrapperRef}>
-            <div
-              className={`bg-gray-100 rounded-xl px-4 py-4 relative ${
-                meta.error && meta.touched ? "border border-red-500" : ""
-              }`}
-            >
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                {label}
-              </label>
-              <div className="relative">
-                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-500">
-                  <MapPin size={18} />
-                </div>
-                <input
-                  {...props}
-                  type="text"
-                  value={inputValue || field.value || ""}
-                  onChange={(e) => handleInputChange(e, form.setFieldValue)}
-                  onFocus={handleFocus}
-                  placeholder={placeholder}
-                  disabled={!ready}
-                  className="w-full bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-base pl-7 pr-10 disabled:opacity-50"
-                  autoComplete="off"
-                />
-                {inputValue && (
-                  <button
-                    type="button"
-                    onClick={() => handleClear(form.setFieldValue)}
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 focus:outline-none"
-                  >
-                    <X size={18} />
-                  </button>
-                )}
-              </div>
-            </div>
+        {({ field, meta, form }) => {
+          // ✅ display logic: prefer description if object, otherwise typed text
+          const displayValue =
+            typeof field.value === "object" && field.value !== null
+              ? field.value.description
+              : inputValue;
 
-            {/* Google Places Suggestions Dropdown */}
-            {isOpen && status === "OK" && data && data.length > 0 && (
-              <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
-                <ul>
-                  {data.map((suggestion) => (
-                    <li
-                      key={suggestion.place_id}
-                      onClick={() =>
-                        handleSelectLocation(suggestion, form.setFieldValue)
-                      }
-                      className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+          return (
+            <div className="relative" ref={wrapperRef}>
+              <div
+                className={`bg-gray-100 rounded-xl px-4 py-4 relative ${
+                  meta.error && meta.touched ? "border border-red-500" : ""
+                }`}
+              >
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  {label}
+                </label>
+
+                <div className="relative">
+                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-500">
+                    <SlLocationPin size={18} />
+                  </div>
+
+                  <input
+                    {...props}
+                    type="text"
+                    value={displayValue || ""}
+                    onChange={handleInputChange}
+                    onFocus={() => displayValue && setIsOpen(true)}
+                    placeholder={placeholder}
+                    disabled={!ready}
+                    className="w-full bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-base pl-7 pr-10 disabled:opacity-50"
+                    autoComplete="off"
+                  />
+
+                  {displayValue && (
+                    <button
+                      type="button"
+                      onClick={() => handleClear(form.setFieldValue)}
+                      className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 focus:outline-none"
                     >
-                      <div className="flex items-start gap-3">
-                        <MapPin
-                          size={16}
-                          className="text-gray-400 mt-1 flex-shrink-0"
-                        />
-                        <div>
-                          <div className="text-gray-900 font-medium text-sm">
-                            {suggestion.structured_formatting.main_text}
-                          </div>
-                          {suggestion.structured_formatting.secondary_text && (
-                            <div className="text-gray-500 text-xs">
-                              {suggestion.structured_formatting.secondary_text}
+                      <RxCross2 size={18} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Suggestions dropdown */}
+              {isOpen && inputValue.trim().length > 0 && hasValidSuggestions && (
+                <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
+                  <ul>
+                    {data.map((suggestion) => {
+                      const mainText =
+                        suggestion.structured_formatting?.main_text || "";
+                      const secondaryText =
+                        suggestion.structured_formatting?.secondary_text || "";
+                      return (
+                        <li
+                          key={suggestion.place_id}
+                          onClick={() =>
+                            handleSelectLocation(
+                              suggestion,
+                              form.setFieldValue
+                            )
+                          }
+                          className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                        >
+                          <div className="flex items-start gap-3">
+                            <SlLocationPin
+                              size={16}
+                              className="text-gray-400 mt-1 flex-shrink-0"
+                            />
+                            <div className="flex-1">
+                              <div className="text-gray-900 font-medium text-sm">
+                                {mainText}
+                              </div>
+                              {secondaryText && (
+                                <div className="text-gray-500 text-xs mt-0.5">
+                                  {secondaryText}
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* No results message */}
-            {isOpen && status === "ZERO_RESULTS" && inputValue.length >= 2 && (
-              <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="px-4 py-3 text-gray-500 text-sm">
-                  No locations found. Try a different search.
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Loading state */}
-            {!ready && (
-              <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="px-4 py-3 text-gray-500 text-sm">
-                  Loading Google Maps...
-                </div>
-              </div>
-            )}
-
-            {meta.touched && meta.error && (
-              <div className="text-red-500 text-sm mt-1">{meta.error}</div>
-            )}
-          </div>
-        )}
+              {meta.touched && meta.error && (
+                <div className="text-red-500 text-sm mt-1">{meta.error}</div>
+              )}
+            </div>
+          );
+        }}
       </Field>
     </div>
   );

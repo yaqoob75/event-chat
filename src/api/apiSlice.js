@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://elloapp.duckdns.org",
+    baseUrl: "https://event-chat-be.vercel.app",
+    // baseUrl: "https://elloapp.duckdns.org",
     // baseUrl: "https://1a113cbc1f4d.ngrok-free.app",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
@@ -85,7 +86,7 @@ export const api = createApi({
       query: ({
         eventName = "",
         eventType = "",
-        page = "",
+        page = 1,
         limit = 10,
         coHost,
       }) => {
@@ -103,7 +104,7 @@ export const api = createApi({
     getEventDetail: builder.query({
       query: ({ id }) => {
         return {
-          url: `/event/eventById?${id}`,
+          url: `/event/eventById?id=${id}`,
           method: "GET",
         };
       },
@@ -121,7 +122,7 @@ export const api = createApi({
 
     getAllMyGroups: builder.query({
       query: ({ id, search = "", page = "", limit = 10 }) => ({
-        url: `/group/groupById?${id}`,
+        url: `/group/groupById?id=${id}`,
         method: "GET",
         params: { search, page, limit },
       }),

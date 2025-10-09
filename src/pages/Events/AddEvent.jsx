@@ -11,6 +11,7 @@ import {
 } from "../../components";
 import ImageUploader from "../../components/ImageUploader";
 import { cityOptions, stateOptions, genderOptions } from "../../constants/home";
+import LocationSelectField from "../../components/LocationSelectField";
 
 const AddEvent = () => {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ const AddEvent = () => {
     location: "",
     tags: "",
     description: "",
+    locationa: null,
   };
 
   const handleSubmit = (values) => {
@@ -136,6 +138,14 @@ const AddEvent = () => {
               name="description"
               placeholder="Description....."
             />
+      <div className="mt-6">
+              <LocationSelectField
+                label="Google Location"
+                name="locationa"
+                placeholder="Search for a location..."
+                onLocationSelect={(loc) => console.log("Selected:", loc)}
+              />
+            </div>
             <div className="flex w-full items-center justify-end gap-4 pt-6">
               <CustomButton
                 btnTitle="Cancel"

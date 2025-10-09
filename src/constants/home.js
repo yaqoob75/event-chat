@@ -73,6 +73,40 @@ export const formatEventDate = (dateString) => {
   return `${dayName} ${day} ${month}, ${hours}-${endHour}${ampm}`;
 };
 
+
+export const formatEventDateRange = (startDate, endDate) => {
+  if (!startDate || !endDate) return "N/A";
+
+  try {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Format day, date, and month
+    const datePart = start.toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    });
+
+    // Format time
+    const startTime = start.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    const endTime = end.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    return `${datePart}, ${startTime} - ${endTime}`;
+  } catch {
+    return "N/A";
+  }
+};
+
+
 export const cityOptions = [
   { value: "new-york", label: "New York" },
   { value: "los-angeles", label: "Los Angeles" },
@@ -136,53 +170,6 @@ export const eventsAttendedData = [
   },
 ];
 
-export const eventDetailTags = [
-  "Food",
-  "Run Clubs",
-  "Dance",
-  "Picnics",
-  "Food",
-  "Dance",
-  "Food",
-  "Run Clubs",
-  "Dance",
-  "Picnics",
-  "Food",
-  "Dance",
-  "Food",
-  "Run Clubs",
-  "Dance",
-  "Picnics",
-  "Food",
-  "Dance",
-];
-
-export const eventDetailCoHosts = [
-  {
-    name: "Host 1",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
-  },
-  {
-    name: "Host 2",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
-  },
-  {
-    name: "Host 3",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
-  },
-  {
-    name: "Host 4",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
-  },
-  {
-    name: "Host 5",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
-  },
-  {
-    name: "Host 6",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
-  },
-];
 
 export const postsData = [
   {

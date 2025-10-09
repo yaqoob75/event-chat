@@ -7,13 +7,15 @@ import {
   LocationMap,
   CustomButton,
   CustomLoader,
+  Image,
 } from "../../components";
-import { eventDetailTags, eventDetailCoHosts } from "../../constants/home";
+import { getFullName, formatEventDateRange } from "../../constants/home";
 import { useGetEventDetailQuery } from "../../api/apiSlice";
 
 const EventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const maxCoHosts = 3;
 
   useHeader({
     isHeader: true,
@@ -22,17 +24,30 @@ const EventDetail = () => {
   });
 
   const { data, isLoading, isFetching } = useGetEventDetailQuery({ id });
+  const eventData = data?.data?.event;
 
-  console.log("data::", data)
+  console.log("data::", eventData);
 
-  const maxCoHosts = 3;
-  const visibleCoHosts = eventDetailCoHosts.slice(0, maxCoHosts);
-  const remainingCount = eventDetailCoHosts.length - maxCoHosts;
+  const coHosts = Array.isArray(eventData?.coHOst)
+    ? eventData.coHOst.map((item) => ({
+        name: item?.firstName || "N/A",
+        avatar: item?.profilePicture || null,
+      }))
+    : [];
 
-  const eventLocation = {
-    lat: -37.8136,
-    lng: 144.9631,
-  };
+  const visibleCoHosts = coHosts.slice(0, maxCoHosts);
+  const remainingCount = coHosts.length - maxCoHosts;
+
+  const eventLocation =
+    eventData?.location?.coordinates?.length === 2
+      ? {
+          lat: eventData.location.coordinates[1] ?? "N/A",
+          lng: eventData.location.coordinates[0] ?? "N/A",
+        }
+      : {
+          lat: "N/A",
+          lng: "N/A",
+        };
 
   return (
     <div className="w-full">
@@ -44,19 +59,23 @@ const EventDetail = () => {
           <div className="flex gap-32">
             {/* Left Side */}
             <div className="w-[70%]">
-              <p className="text-sm">Kiehl’s</p>
-              <h1 className="text-2xl font-semibold">Kiehl’s Summer Series</h1>
-              <p className="text-sm">Fri, 4 Mar, 7:00PM - 9:00PM</p>
+              <p className="text-sm">{eventData?.eventType || "N/A"}</p>
+              <h1 className="text-2xl font-semibold capitalize">
+                {eventData?.eventName || "N/A"}
+              </h1>
+              <p className="text-sm">
+                {formatEventDateRange(eventData?.startDate, eventData?.endDate)}
+              </p>
 
               <div className="flex items-center border-y py-2 mt-4 border-[#00000026]">
                 <div className="flex items-center gap-2 w-[70%]">
                   <ProfileAvatar
-                    src="https://randomuser.me/api/portraits/men/75.jpg"
+                    src={eventData?.userId?.profilePicture}
                     alt="John Doe"
                     size="md"
                   />
-                  <h4 className="text-sm font-semibold">
-                    Ben Jones
+                  <h4 className="text-sm font-semibold capitalize">
+                    {getFullName(eventData?.userId)}
                     <span className="text-sm font-normal"> posted in </span>
                     <span className="text-sm font-semibold">
                       Skincare Team Melbourne
@@ -89,20 +108,13 @@ const EventDetail = () => {
               <div className="my-5">
                 <h2 className="text-xl font-semibold mb-3">Description</h2>
                 <div className="space-y-1 text-gray-700">
-                  <p>We will have a great time walking in the park together.</p>
-                  <p>
-                    Bring your walking shoes, and your best conversation as we
-                    climb the mountain of moisturiser.
-                  </p>
-                  <p>
-                    This is a public event, but the admin must accept your wave.
-                  </p>
+                  {eventData?.description ? eventData?.description : "N/A"}
                 </div>
               </div>
               {/* Tags */}
               <div className="flex gap-32 py-4 border-y border-[#00000026]">
                 <h2 className="text-xl font-semibold">Tags</h2>
-                <TagList tags={eventDetailTags} />
+                <TagList tags={eventData?.eventCategory} />
               </div>
               {/* Map */}
               <div className="mt-4">
@@ -151,8 +163,8 @@ const EventDetail = () => {
             </div>
             {/* Right Side */}
             <div className="w-[30%]">
-              <img
-                src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+              <Image
+                src={eventData?.image}
                 alt="icon"
                 className="h-[436px] w-full rounded-xl"
               />
