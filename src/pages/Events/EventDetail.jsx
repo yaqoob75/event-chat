@@ -55,7 +55,7 @@ const EventDetail = () => {
         <CustomLoader />
       ) : (
         <>
-          <h2 className="text-xl font-semibold mb-6">Event Details</h2>
+          <h2 className="text-xl font-semibold mb-3">Event Details</h2>
           <div className="flex gap-32">
             {/* Left Side */}
             <div className="w-[70%]">
@@ -105,23 +105,23 @@ const EventDetail = () => {
                 </div>
               </div>
               {/* Description */}
-              <div className="my-5">
-                <h2 className="text-xl font-semibold mb-3">Description</h2>
+              <div className="my-3">
+                <h2 className="text-xl font-semibold mb-1">Description</h2>
                 <div className="space-y-1 text-gray-700">
                   {eventData?.description ? eventData?.description : "N/A"}
                 </div>
               </div>
               {/* Tags */}
-              <div className="flex gap-32 py-4 border-y border-[#00000026]">
+              <div className="flex gap-32 py-3 border-y border-[#00000026]">
                 <h2 className="text-xl font-semibold">Tags</h2>
                 <TagList tags={eventData?.eventCategory} />
               </div>
               {/* Map */}
-              <div className="mt-4">
+              <div className="mt-3">
                 <LocationMap location={eventLocation} />
               </div>
               {/* Posted in */}
-              <div className="mt-4">
+              <div className="mt-3">
                 <p className="text-xs">Posted in</p>
                 <h2 className="text-base font-semibold">
                   Skincare Team Melbourne
@@ -129,7 +129,7 @@ const EventDetail = () => {
                 <p className="text-sm">
                   A group of girlies that love skincare and hate pores lol!
                 </p>
-                <div className="flex -space-x-2 my-4">
+                <div className="flex -space-x-2 my-3">
                   {visibleCoHosts.map((host, index) => (
                     <ProfileAvatar
                       key={index}

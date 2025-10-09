@@ -14,8 +14,16 @@ const LocationMap = ({ location }) => {
   if (!isLoaded) return <p>Loading...</p>;
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden">
-      <GoogleMap mapContainerStyle={containerStyle} center={location} zoom={15}>
+    <div className="rounded-xl overflow-hidden">
+      <GoogleMap mapContainerStyle={containerStyle} center={location} zoom={15}
+       options={{
+          scrollwheel: false,
+          gestureHandling: "cooperative",
+          zoomControl: true,
+          mapTypeControl: false,
+          streetViewControl: false,
+        }}
+      >
         <Marker position={location} />
       </GoogleMap>
     </div>
