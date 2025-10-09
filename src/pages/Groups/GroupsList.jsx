@@ -11,7 +11,6 @@ import {
   CustomButton,
   UserAvatar,
   StatusBadge,
-  CustomLoader,
 } from "../../components";
 import {
   subscriptionFilterOptions,
@@ -27,6 +26,7 @@ const GroupsList = () => {
     isHeader: true,
     headerText: "Groups",
   });
+
   const user = useSelector((state) => state.auth?.user);
   const userId = user?._id;
 
@@ -36,12 +36,14 @@ const GroupsList = () => {
   const [selectedFilter, setSelectedFilter] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [tableData, setTableData] = useState([]);
   const limit = 10;
 
   const toggleFilter = () => setIsFilterVisible((prev) => !prev);
   const handleFilterChange = (option) => setSelectedFilter(option);
   const handleSearchChange = (e) => setSearchText(e.target.value);
+  const handlePageChange = (page) => setCurrentPage(page);
 
   // === API Calls based on tab ===
   const {
@@ -77,24 +79,20 @@ const GroupsList = () => {
     isAllGroupsFetching ||
     isMyGroupsFetching;
 
-  // === Update table data when API response changes ===
   useEffect(() => {
-    let fetchedData =
-      activeTab === 0
-        ? allGroupsData?.data?.groups
-        : myGroupsData?.data?.groups;
+    let responseData = activeTab === 0 ? allGroupsData : myGroupsData;
+    let fetchedData = responseData?.data?.groups;
 
-    // ✅ ensure array
     if (!Array.isArray(fetchedData)) {
-      fetchedData =
-        activeTab === 0
-          ? allGroupsData?.data?.groups?.items || []
-          : myGroupsData?.data?.groups?.items || [];
+      fetchedData = responseData?.data?.groups?.items || [];
     }
-
     if (!Array.isArray(fetchedData)) fetchedData = [];
 
-    console.log("fetchedData::", fetchedData);
+    const paginationInfo = responseData?.data?.pagination;
+    if (paginationInfo) {
+      setTotalPages(Number(paginationInfo.totalPages) || 1);
+      setCurrentPage(Number(paginationInfo.currentPage) || 1);
+    }
 
     const formattedData = fetchedData.map((group) => ({
       id: group?._id,
@@ -144,7 +142,10 @@ const GroupsList = () => {
         <ActiveTabSwitch
           tabs={["All Groups", "My Groups"]}
           activeIndex={activeTab}
-          onChange={setActiveTab}
+          onChange={(index) => {
+            setActiveTab(index);
+            setCurrentPage(1);
+          }}
         />
 
         <div className="flex flex-col sm:flex-row items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto">
@@ -186,20 +187,16 @@ const GroupsList = () => {
           )}
         </div>
       </div>
-
-      {loading ? (
-        <CustomLoader />
-      ) : (
-        <ReusableTable
-          columns={columns}
-          data={tableData}
-          isPagination={true}
-          currentPage={currentPage}
-          totalPages={1}
-          onPageChange={setCurrentPage}
-          onRowClick={handleRowClick}
-        />
-      )}
+      <ReusableTable
+        columns={columns}
+        data={tableData}
+        isPagination={true}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onRowClick={handleRowClick}
+        loading={loading}
+      />
     </>
   );
 };
