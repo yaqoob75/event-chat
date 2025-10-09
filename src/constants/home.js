@@ -106,6 +106,25 @@ export const formatEventDateRange = (startDate, endDate) => {
   }
 };
 
+export const groupDateFormat = (dateString) => {
+  if (!dateString) return "N/A";
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "N/A";
+
+  const options = {
+    month: "short",
+    day: "numeric",
+    year: "numeric", // 2025
+    hour: "2-digit", // 11
+    minute: "2-digit", // 58
+    hour12: false,
+  };
+  const formatted = date.toLocaleString("en-US", options);
+  return formatted.replace(",", "");
+};
+
+
 
 export const cityOptions = [
   { value: "new-york", label: "New York" },

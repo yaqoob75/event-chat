@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { LuListFilter } from "react-icons/lu";
 import useHeader from "../../hooks/useHeader";
@@ -12,7 +13,10 @@ import {
   StatusBadge,
   CustomLoader,
 } from "../../components";
-import { subscriptionFilterOptions } from "../../constants/home";
+import {
+  subscriptionFilterOptions,
+  groupDateFormat,
+} from "../../constants/home";
 import {
   useGetAllGroupsQuery,
   useGetAllMyGroupsQuery,
@@ -23,6 +27,8 @@ const GroupsList = () => {
     isHeader: true,
     headerText: "Groups",
   });
+  const user = useSelector((state) => state.auth?.user);
+  const userId = user?._id;
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
@@ -30,6 +36,7 @@ const GroupsList = () => {
   const [selectedFilter, setSelectedFilter] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [tableData, setTableData] = useState([]);
   const limit = 10;
 
   const toggleFilter = () => setIsFilterVisible((prev) => !prev);
@@ -47,7 +54,7 @@ const GroupsList = () => {
       page: currentPage,
       limit,
     },
-    { skip: activeTab !== 0 } // skip unless tab 0
+    { skip: activeTab !== 0 }
   );
 
   const {
@@ -59,9 +66,9 @@ const GroupsList = () => {
       search: searchText,
       page: currentPage,
       limit,
-      id: "123", // optional — replace with logged-in user ID if needed
+      id: userId,
     },
-    { skip: activeTab !== 1 } // skip unless tab 1
+    { skip: activeTab !== 1 }
   );
 
   const loading =
@@ -70,15 +77,26 @@ const GroupsList = () => {
     isAllGroupsFetching ||
     isMyGroupsFetching;
 
-  // === Combine table data dynamically ===
-  const apiData = useMemo(() => {
-    const fetchedData =
+  // === Update table data when API response changes ===
+  useEffect(() => {
+    let fetchedData =
       activeTab === 0
-        ? allGroupsData?.data || []
-        : myGroupsData?.data || [];
+        ? allGroupsData?.data?.groups
+        : myGroupsData?.data?.groups;
 
-    // transform into the format table expects
-    return fetchedData.map((group) => ({
+    // ✅ ensure array
+    if (!Array.isArray(fetchedData)) {
+      fetchedData =
+        activeTab === 0
+          ? allGroupsData?.data?.groups?.items || []
+          : myGroupsData?.data?.groups?.items || [];
+    }
+
+    if (!Array.isArray(fetchedData)) fetchedData = [];
+
+    console.log("fetchedData::", fetchedData);
+
+    const formattedData = fetchedData.map((group) => ({
       id: group?._id,
       group: group?.groupName || "N/A",
       owner: {
@@ -87,15 +105,15 @@ const GroupsList = () => {
       },
       groupType: group?.groupType || "N/A",
       category: group?.category || "N/A",
-      created: group?.createdAt
-        ? new Date(group.createdAt).toLocaleString()
-        : "N/A",
+      created: groupDateFormat(group?.createdAt),
       status: group?.status || "Active",
     }));
+
+    setTableData(formattedData);
   }, [activeTab, allGroupsData, myGroupsData]);
 
   const columns = [
-    { key: "group", label: "Group", sortable: true },
+    { key: "group", label: "Group", sortable: true, isCapitalize: true },
     ...(activeTab === 0
       ? [
           {
@@ -174,7 +192,7 @@ const GroupsList = () => {
       ) : (
         <ReusableTable
           columns={columns}
-          data={apiData}
+          data={tableData}
           isPagination={true}
           currentPage={currentPage}
           totalPages={1}

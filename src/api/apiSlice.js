@@ -3,13 +3,17 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://event-chat-be.vercel.app",
+    baseUrl: "https://276b909aba82.ngrok-free.app",
+    // baseUrl: "https://event-chat-be.vercel.app",
     // baseUrl: "https://elloapp.duckdns.org",
-    // baseUrl: "https://1a113cbc1f4d.ngrok-free.app",
-    prepareHeaders: (headers, { getState }) => {
-      const token = getState().auth.token;
+    prepareHeaders: (headers, { getState, endpoint }) => {
+      const token = getState()?.auth?.token;
       if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
+        if (endpoint === "getAllGroups" || endpoint === "getAllMyGroups") {
+          headers.set("x-auth-token", token);
+        } else {
+          headers.set("Authorization", `Bearer ${token}`);
+        }
       }
       return headers;
     },
@@ -102,12 +106,10 @@ export const api = createApi({
     }),
 
     getEventDetail: builder.query({
-      query: ({ id }) => {
-        return {
-          url: `/event/eventById?id=${id}`,
-          method: "GET",
-        };
-      },
+      query: ({ id }) => ({
+        url: `/event/eventById?id=${id}`,
+        method: "GET",
+      }),
     }),
 
     // ================= GROUPS =================
@@ -126,7 +128,7 @@ export const api = createApi({
         method: "GET",
         params: { search, page, limit },
       }),
-      providesTags: ["allMyGroups"],
+      providesTags: ["myAllGroups"],
     }),
 
     // ================= SUPPORTS =================
