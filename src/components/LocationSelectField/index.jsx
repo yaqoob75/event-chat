@@ -21,7 +21,7 @@ const LocationSelectField = ({
 
   const {
     ready,
-    value,
+    // value,
     suggestions: { status, data },
     setValue,
     clearSuggestions,
@@ -40,7 +40,7 @@ const LocationSelectField = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ only updates input (not formik)
+  // Only updates input (not formik)
   const handleInputChange = (e) => {
     const newValue = e.target.value;
     setInputValue(newValue);
@@ -49,7 +49,7 @@ const LocationSelectField = ({
     else setIsOpen(false);
   };
 
-  // ✅ sets full object in Formik on select
+  // Sets full object in Formik on select
   const handleSelectLocation = async (suggestion, setFieldValue) => {
     try {
       setValue(suggestion.description, false);
@@ -82,7 +82,7 @@ const LocationSelectField = ({
         postalCode,
       };
 
-      // ✅ only now set Formik value
+      // Only now set Formik value
       setFieldValue(name, locationData);
       setInputValue(locationData.description);
 
@@ -113,7 +113,6 @@ const LocationSelectField = ({
     <div className="w-full">
       <Field name={name}>
         {({ field, meta, form }) => {
-          // ✅ display logic: prefer description if object, otherwise typed text
           const displayValue =
             typeof field.value === "object" && field.value !== null
               ? field.value.description
@@ -160,47 +159,50 @@ const LocationSelectField = ({
               </div>
 
               {/* Suggestions dropdown */}
-              {isOpen && inputValue.trim().length > 0 && hasValidSuggestions && (
-                <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
-                  <ul>
-                    {data.map((suggestion) => {
-                      const mainText =
-                        suggestion.structured_formatting?.main_text || "";
-                      const secondaryText =
-                        suggestion.structured_formatting?.secondary_text || "";
-                      return (
-                        <li
-                          key={suggestion.place_id}
-                          onClick={() =>
-                            handleSelectLocation(
-                              suggestion,
-                              form.setFieldValue
-                            )
-                          }
-                          className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
-                        >
-                          <div className="flex items-start gap-3">
-                            <SlLocationPin
-                              size={16}
-                              className="text-gray-400 mt-1 flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                              <div className="text-gray-900 font-medium text-sm">
-                                {mainText}
-                              </div>
-                              {secondaryText && (
-                                <div className="text-gray-500 text-xs mt-0.5">
-                                  {secondaryText}
+              {isOpen &&
+                inputValue.trim().length > 0 &&
+                hasValidSuggestions && (
+                  <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
+                    <ul>
+                      {data.map((suggestion) => {
+                        const mainText =
+                          suggestion.structured_formatting?.main_text || "";
+                        const secondaryText =
+                          suggestion.structured_formatting?.secondary_text ||
+                          "";
+                        return (
+                          <li
+                            key={suggestion.place_id}
+                            onClick={() =>
+                              handleSelectLocation(
+                                suggestion,
+                                form.setFieldValue
+                              )
+                            }
+                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                          >
+                            <div className="flex items-start gap-3">
+                              <SlLocationPin
+                                size={16}
+                                className="text-gray-400 mt-1 flex-shrink-0"
+                              />
+                              <div className="flex-1">
+                                <div className="text-gray-900 font-medium text-sm">
+                                  {mainText}
                                 </div>
-                              )}
+                                {secondaryText && (
+                                  <div className="text-gray-500 text-xs mt-0.5">
+                                    {secondaryText}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
 
               {meta.touched && meta.error && (
                 <div className="text-red-500 text-sm mt-1">{meta.error}</div>
