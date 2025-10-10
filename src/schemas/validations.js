@@ -112,7 +112,12 @@ export const addEventSchema = Yup.object().shape({
   noOfMembers: Yup.string().required("Number of members is required"),
   genderLimit: Yup.string().required("Gender limit is required"),
   venue: Yup.string().required("Venue is required"),
-  location: Yup.string().required("Location is required"),
+  location: Yup.object()
+    .shape({
+      description: Yup.string().required("Location is required"),
+    })
+    .nullable()
+    .required("Location is required"),
   tags: Yup.string().required("Please select at least one tag"),
   description: Yup.string().required("Description is required"),
 });

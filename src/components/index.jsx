@@ -38,6 +38,7 @@ import ChatSidebar from "./ChatSidebar";
 import ChatArea from "./ChatArea";
 import DirectorySidebar from "./DirectorySidebar";
 import Image from "./Image";
+import LocationSelectField from "./LocationSelectField";
 // Customer Components
 import CustomerProfileSection from "./CustomerProfileSection";
 import CustomerProfileImages from "./CustomerProfileImages";
@@ -85,6 +86,7 @@ export {
   ChatArea,
   DirectorySidebar,
   Image,
+  LocationSelectField,
   // Customer Components
   CustomerProfileSection,
   CustomerProfileImages,

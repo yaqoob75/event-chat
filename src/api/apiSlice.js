@@ -3,15 +3,13 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://276b909aba82.ngrok-free.app",
+    baseUrl: "https://f30a17d533ac.ngrok-free.app",
     // baseUrl: "https://event-chat-be.vercel.app",
     // baseUrl: "https://elloapp.duckdns.org",
     prepareHeaders: (headers, { getState, endpoint }) => {
       const token = getState()?.auth?.token;
       if (token) {
-        if (endpoint === "getAllGroups" || endpoint === "getAllMyGroups") {
-          headers.set("x-auth-token", token);
-        } else {
+        if (endpoint !== "getAllGroups") {
           headers.set("Authorization", `Bearer ${token}`);
         }
       }
@@ -114,17 +112,17 @@ export const api = createApi({
 
     // ================= GROUPS =================
     getAllGroups: builder.query({
-      query: ({ search = "", page = "", limit = 10 }) => ({
+      query: ({ groupType = "", groupName = "", page = "", limit = 10 }) => ({
         url: "/group/getAllGroup",
         method: "GET",
-        params: { search, page, limit },
+        params: { groupType, groupName, page, limit },
       }),
       providesTags: ["allGroups"],
     }),
 
     getAllMyGroups: builder.query({
       query: ({ id, search = "", page = "", limit = 10 }) => ({
-        url: `/group/groupById?id=${id}`,
+        url: `/user/getUserProfile/${id}`,
         method: "GET",
         params: { search, page, limit },
       }),

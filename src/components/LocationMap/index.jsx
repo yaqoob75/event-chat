@@ -8,15 +8,18 @@ const containerStyle = {
 
 const LocationMap = ({ location }) => {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyBnrxeygFgAORMmFmwr5BXTk05680RlY48",
+    googleMapsApiKey: "AIzaSyBuTHDrq4khVDBHtqigUGnzkW6lDkqSmnY",
   });
 
   if (!isLoaded) return <p>Loading...</p>;
 
   return (
     <div className="rounded-xl overflow-hidden">
-      <GoogleMap mapContainerStyle={containerStyle} center={location} zoom={15}
-       options={{
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={location}
+        zoom={15}
+        options={{
           scrollwheel: false,
           gestureHandling: "cooperative",
           zoomControl: true,

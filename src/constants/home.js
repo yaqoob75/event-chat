@@ -124,7 +124,11 @@ export const groupDateFormat = (dateString) => {
   return formatted.replace(",", "");
 };
 
-
+export const eventsFilterOptions = [
+  { label: "Public", value: "Public" },
+  { label: "Private", value: "Private" },
+  { label: "All", value: "" },
+];
 
 export const cityOptions = [
   { value: "new-york", label: "New York" },
@@ -230,12 +234,6 @@ export const subscriptionFilterOptions = [
   { label: "Business", value: "business" },
   { label: "Individual", value: "individual" },
   { label: "All", value: "all" },
-];
-
-export const eventsFilterOptions = [
-  { label: "Public", value: "Public" },
-  { label: "Private", value: "Private" },
-  { label: "All", value: "" },
 ];
 
 export const chatsData = [

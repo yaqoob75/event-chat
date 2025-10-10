@@ -12,10 +12,8 @@ import {
   UserAvatar,
   StatusBadge,
 } from "../../components";
-import {
-  subscriptionFilterOptions,
-  groupDateFormat,
-} from "../../constants/home";
+import { eventsFilterOptions, groupDateFormat } from "../../constants/home";
+import { useDebounce } from "../../hooks/useDebounce";
 import {
   useGetAllGroupsQuery,
   useGetAllMyGroupsQuery,
@@ -39,6 +37,7 @@ const GroupsList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [tableData, setTableData] = useState([]);
   const limit = 10;
+  const debouncedSearchText = useDebounce(searchText, 1000);
 
   const toggleFilter = () => setIsFilterVisible((prev) => !prev);
   const handleFilterChange = (option) => setSelectedFilter(option);
@@ -52,7 +51,8 @@ const GroupsList = () => {
     isFetching: isAllGroupsFetching,
   } = useGetAllGroupsQuery(
     {
-      search: searchText,
+      groupName: debouncedSearchText,
+      groupType: selectedFilter?.value || "",
       page: currentPage,
       limit,
     },
@@ -65,7 +65,7 @@ const GroupsList = () => {
     isFetching: isMyGroupsFetching,
   } = useGetAllMyGroupsQuery(
     {
-      search: searchText,
+      search: debouncedSearchText,
       page: currentPage,
       limit,
       id: userId,
@@ -97,14 +97,19 @@ const GroupsList = () => {
     const formattedData = fetchedData.map((group) => ({
       id: group?._id,
       group: group?.groupName || "N/A",
-      owner: {
-        name: group?.ownerName || "Unknown",
-        avatar: group?.ownerAvatar || "",
+      coHost: {
+        name: group?.coHOst?.[0]?.firstName || "N/A",
+        avatar: group?.coHOst?.[0]?.profilePicture || "",
       },
       groupType: group?.groupType || "N/A",
-      category: group?.category || "N/A",
+      category: Array.isArray(group?.groupCategory)
+        ? group.groupCategory.length > 0
+          ? group.groupCategory.join(", ")
+          : "N/A"
+        : group?.groupCategory
+        ? group.groupCategory
+        : "N/A",
       created: groupDateFormat(group?.createdAt),
-      status: group?.status || "Active",
     }));
 
     setTableData(formattedData);
@@ -112,24 +117,20 @@ const GroupsList = () => {
 
   const columns = [
     { key: "group", label: "Group", sortable: true, isCapitalize: true },
-    ...(activeTab === 0
-      ? [
-          {
-            key: "owner",
-            label: "Event Owner",
-            render: (value) => <UserAvatar user={value} />,
-          },
-        ]
-      : []),
-    { key: "groupType", label: "Group Type", sortable: true },
-    { key: "category", label: "Category", sortable: true },
-    { key: "created", label: "Created", sortable: true },
     {
-      key: "status",
-      label: "Status",
-      sortable: true,
-      render: (value) => <StatusBadge status={value} />,
+      key: "coHost",
+      label: "Group CoHost",
+      render: (value) => <UserAvatar user={value} />,
     },
+    { key: "groupType", label: "Group Type", sortable: true },
+    { key: "category", label: "Category", sortable: true, isCapitalize: true },
+    { key: "created", label: "Created", sortable: true },
+    // {
+    //   key: "status",
+    //   label: "Status",
+    //   sortable: true,
+    //   render: (value) => <StatusBadge status={value} />,
+    // },
   ];
 
   const handleRowClick = (row) => {
@@ -162,7 +163,7 @@ const GroupsList = () => {
             <FilterSelect
               id="filterBy"
               value={selectedFilter}
-              options={subscriptionFilterOptions}
+              options={eventsFilterOptions}
               onSelect={handleFilterChange}
               placeholder="Select..."
               width="w-full sm:w-[14rem]"

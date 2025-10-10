@@ -25,16 +25,22 @@ const ReusableTable = ({
       ) : (
         <>
           <div className="rounded-lg border border-gray-200 bg-white overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full table-fixed">
+              <colgroup>
+                {columns.map((_, index) => (
+                  <col key={index} className="w-[calc(100%/var(--col-count))]" />
+                ))}
+              </colgroup>
+
               <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
+                <tr style={{ "--col-count": columns.length }}>
                   {columns.map((column) => (
                     <th
                       key={column.key}
-                      className="px-6 py-3 text-left text-xs font-semibold text-[#717680] capitalize"
+                      className="px-4 py-3 text-left text-xs font-semibold text-[#717680] capitalize truncate"
                     >
                       <div className="flex items-center">
-                        <span>{column.label}</span>
+                        <span className="truncate">{column.label}</span>
                         {column.sortable && (
                           <div className="flex flex-col ml-1.5">
                             <FaChevronUp className="w-2 h-2 text-gray-400" />
@@ -46,7 +52,11 @@ const ReusableTable = ({
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+
+              <tbody
+                className="bg-white divide-y divide-gray-200"
+                style={{ "--col-count": columns.length }}
+              >
                 {data.map((row, index) => (
                   <tr
                     key={index}
@@ -56,7 +66,7 @@ const ReusableTable = ({
                     {columns.map((column) => (
                       <td
                         key={column.key}
-                        className={`px-6 py-4 text-sm font-normal text-[#535862] whitespace-nowrap ${
+                        className={`px-4 py-3 text-sm font-normal text-[#535862] truncate ${
                           column.isCapitalize ? "capitalize" : ""
                         }`}
                       >
